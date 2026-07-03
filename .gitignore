@@ -1,0 +1,48 @@
+# ===== Dependencies =====
+node_modules/
+.pnp
+.pnp.js
+
+# ===== Environment variables (NEVER commit these) =====
+.env
+.env.local
+.env.development
+.env.production
+server/.env
+server/.env.local
+server/.env.production
+client/.env
+client/.env.local
+# Safe to commit — contains no real secrets
+!server/.env.production.example
+
+# ===== Build outputs =====
+dist/
+build/
+client/dist/
+
+# ===== Logs =====
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Editor files =====
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===== Test scripts (temporary) =====
+server/src/utils/test_upgrades.js
+
+# ===== Uploaded media / photos (large binary files) =====
+photos/
+background_image.png
+client/public/fix_background.png
