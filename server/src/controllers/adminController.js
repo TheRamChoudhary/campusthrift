@@ -145,6 +145,7 @@ exports.deleteListingModerator = asyncHandler(async (req, res, next) => {
   }
 
   const title = listing.title;
+  const sellerId = listing.seller;
   await listing.deleteOne();
 
   // Log action
@@ -154,6 +155,20 @@ exports.deleteListingModerator = asyncHandler(async (req, res, next) => {
     ipAddress: req.ip || "127.0.0.1",
     details: `Moderator deleted flagged listing "${title}" (ID: ${id}) from the platform.`,
   });
+
+  // Notify seller anonymously
+  try {
+    const Notification = require("../models/Notification");
+    await Notification.create({
+      user: sellerId,
+      type: "request",
+      title: "Listing Removed by Admin ⚠️",
+      message: `Your listing for "${title}" was removed by the administrator (admin@nitt.edu) for violating platform guidelines.`,
+      link: "/dashboard?tab=buyer",
+    });
+  } catch (err) {
+    console.error("Failed to send moderation notification:", err.message);
+  }
 
   res
     .status(200)

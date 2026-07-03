@@ -54,6 +54,23 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    bio: {
+      type: String,
+      maxlength: [200, "Bio cannot exceed 200 characters"],
+      default: "",
+    },
+    department: {
+      type: String,
+      default: "",
+    },
+    branch: {
+      type: String,
+      default: "",
+    },
+    hostel: {
+      type: String,
+      default: "",
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     activeListings: [

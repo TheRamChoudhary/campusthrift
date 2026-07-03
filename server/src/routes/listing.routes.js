@@ -12,15 +12,15 @@ const {
   getWishlist,
   reportListing,
 } = require("../controllers/listingController");
-const { protect } = require("../middleware/auth");
+const { protect, optionalProtect } = require("../middleware/auth");
 const { upload } = require("../middleware/upload");
 
-router.get("/", getAllListings);
+router.get("/", optionalProtect, getAllListings);
 router.get("/my", protect, getMyListings);
 router.get("/my/wishlist", protect, getWishlist);
-router.get("/:id", getListingById);
-router.post("/", protect, upload.array("images", 5), createListing);
-router.put("/:id", protect, upload.array("images", 5), updateListing);
+router.get("/:id", optionalProtect, getListingById);
+router.post("/", protect, upload.fields([{ name: "images", maxCount: 10 }, { name: "video", maxCount: 1 }]), createListing);
+router.put("/:id", protect, upload.fields([{ name: "images", maxCount: 10 }, { name: "video", maxCount: 1 }]), updateListing);
 router.delete("/:id", protect, deleteListing);
 
 // Wishlist toggle & Report endpoints

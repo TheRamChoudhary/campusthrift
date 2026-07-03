@@ -114,19 +114,9 @@ exports.approveRequest = asyncHandler(async (req, res, next) => {
     link: "/dashboard?tab=buyer",
   });
 
-  // Mark listing as reserved and reject all other pending requests atomically
-  await Promise.all([
-    Listing.findByIdAndUpdate(request.listing, { status: "reserved" }),
-    Request.updateMany(
-      { listing: request.listing, _id: { $ne: request._id }, status: "pending" },
-      { status: "rejected" },
-    ),
-  ]);
-
   // Create a conversation for the buyer and seller if it doesn't already exist
   let conversation = await Conversation.findOne({
     participants: { $all: [req.user._id, request.buyer] },
-    listing: request.listing,
   });
 
   if (!conversation) {
@@ -134,6 +124,10 @@ exports.approveRequest = asyncHandler(async (req, res, next) => {
       participants: [req.user._id, request.buyer],
       listing: request.listing,
     });
+  } else {
+    // Update active listing in conversation
+    conversation.listing = request.listing;
+    await conversation.save();
   }
 
   // Add an initial system/automated message to start the chat
@@ -142,6 +136,7 @@ exports.approveRequest = asyncHandler(async (req, res, next) => {
     sender: req.user._id, // the seller who approved
     recipient: request.buyer,
     text: `Hi! I have approved your request for "${listing?.title}". Let's chat about the details!`,
+    listing: request.listing,
     status: "delivered"
   });
 
@@ -152,7 +147,11 @@ exports.approveRequest = asyncHandler(async (req, res, next) => {
   // Emit socket events for real-time chat updates
   const io = req.app.get("io");
   if (io) {
-    const messageData = initMessage.toObject();
+    const msgData = await Message.findById(initMessage._id).populate(
+      "listing",
+      "title price images status condition",
+    );
+    const messageData = msgData.toObject();
     
     // Alert the buyer in real-time
     io.to(request.buyer.toString()).emit("messageReceived", messageData);
@@ -161,7 +160,13 @@ exports.approveRequest = asyncHandler(async (req, res, next) => {
     io.to(req.user._id.toString()).emit("messageSentSync", messageData);
   }
 
-  res.status(200).json(new ApiResponse(200, request, "Request approved"));
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      { request, conversationId: conversation._id },
+      "Request approved",
+    ),
+  );
 });
 
 // @route PUT /api/v1/requests/:id/reject

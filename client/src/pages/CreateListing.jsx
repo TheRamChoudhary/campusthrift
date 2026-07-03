@@ -18,6 +18,8 @@ export default function CreateListing() {
   const [imageFiles, setImageFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [isDragActive, setIsDragActive] = useState(false);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,8 +34,8 @@ export default function CreateListing() {
     const currentCount = imageFiles.length;
     const incomingCount = files.length;
 
-    if (currentCount + incomingCount > 5) {
-      toast.error("You can only upload up to 5 images in total.");
+    if (currentCount + incomingCount > 10) {
+      toast.error("You can only upload up to 10 images in total.");
       return;
     }
 
@@ -112,6 +114,34 @@ export default function CreateListing() {
     toast.success("Image removed.");
   };
 
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const allowedTypes = ["video/mp4", "video/webm", "video/ogg", "video/quicktime"];
+    const maxVideoSize = 20 * 1024 * 1024; // 20MB
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Format not supported. Please upload MP4, WebM, OGG, or QuickTime video.");
+      return;
+    }
+
+    if (file.size > maxVideoSize) {
+      toast.error("Video file is too large. Maximum size is 20MB.");
+      return;
+    }
+
+    setVideoFile(file);
+    setVideoPreview(URL.createObjectURL(file));
+    toast.success("Video added successfully!");
+  };
+
+  const removeVideo = () => {
+    setVideoFile(null);
+    setVideoPreview("");
+    toast.success("Video removed.");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (imageFiles.length === 0) {
@@ -128,6 +158,9 @@ export default function CreateListing() {
       data.append("category", formData.category);
       data.append("condition", formData.condition);
       imageFiles.forEach((file) => data.append("images", file));
+      if (videoFile) {
+        data.append("video", videoFile);
+      }
 
       await api.post("/listings", data);
       toast.success("Listing created successfully!");
@@ -223,25 +256,36 @@ export default function CreateListing() {
                 <label className="block text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-2">
                   Condition
                 </label>
-                <select
-                  name="condition"
-                  value={formData.condition}
-                  onChange={handleChange}
-                  required
-                  className="w-full border border-[#30363d] rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#58a6ff]/20 focus:border-[#58a6ff] transition-all duration-200 bg-slate-50/50 hover:bg-slate-50 cursor-pointer"
-                >
-                  <option value="">Select item condition</option>
-                  <option value="new">🆕 Brand New (Unopened/Unused)</option>
-                  <option value="like-new">
-                    ✨ Like New (Rarely used, perfect state)
-                  </option>
-                  <option value="good">
-                    👍 Good (Used, fully functional, minor wear)
-                  </option>
-                  <option value="fair">
-                    🩹 Fair (Used, signs of wear, fully functional)
-                  </option>
-                </select>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { value: "new", label: "Brand New", emoji: "🆕", desc: "Unused / unopened package" },
+                    { value: "like-new", label: "Like New", emoji: "✨", desc: "Rarely used, pristine state" },
+                    { value: "good", label: "Good", emoji: "👍", desc: "Fully functional, minor wear" },
+                    { value: "fair", label: "Fair", emoji: "🩹", desc: "Visible wear, works perfectly" }
+                  ].map((opt) => {
+                    const isSelected = formData.condition === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, condition: opt.value })}
+                        className={`flex flex-col items-start p-3 rounded-2xl border text-left transition-all duration-200 select-none ${
+                          isSelected
+                            ? "bg-[#388bfd]/10 border-[#58a6ff] shadow-lg scale-[1.01]"
+                            : "bg-slate-50/50 hover:bg-slate-50 border-[#30363d] hover:border-slate-400 text-slate-800"
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs">
+                          <span>{opt.emoji}</span>
+                          <span>{opt.label}</span>
+                        </div>
+                        <p className="text-[10px] text-slate-500 mt-1 font-medium leading-relaxed">
+                          {opt.desc}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -271,7 +315,7 @@ export default function CreateListing() {
               <label className="block text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-2">
                 Product Media{" "}
                 <span className="text-gray-400 font-normal font-sans">
-                  (Up to 5 images, first will be Cover photo)
+                  (Up to 10 images, first will be Cover photo)
                 </span>
               </label>
 
@@ -311,7 +355,7 @@ export default function CreateListing() {
                   </p>
                   <div className="mt-3.5 inline-flex items-center gap-1.5 bg-[#388bfd]/10 text-indigo-700 px-3.5 py-1 rounded-full text-xs font-bold shadow-2xl ">
                     <span>⚡</span>
-                    <span>{imageFiles.length}/5 Images Uploaded</span>
+                    <span>{imageFiles.length}/10 Images Uploaded</span>
                   </div>
                 </div>
               </div>
@@ -390,6 +434,58 @@ export default function CreateListing() {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+            </div>
+
+            {/* Optional Video Upload Component */}
+            <div className="pt-4 border-t border-slate-100">
+              <label className="block text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-2">
+                Product Demo Video <span className="text-gray-400 font-normal font-sans">(Optional, max 1 video, max 20MB)</span>
+              </label>
+
+              {!videoFile ? (
+                <div className="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-3xl cursor-pointer border-slate-300 bg-slate-50/30 hover:border-indigo-400 hover:bg-[#388bfd]/10/20 transition-all duration-300">
+                  <input
+                    id="video-upload"
+                    type="file"
+                    accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                    onChange={handleVideoChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <div className="text-center p-4 pointer-events-none">
+                    <span className="text-3xl block mb-1">🎥</span>
+                    <p className="text-xs font-semibold text-[#8b949e]">
+                      Upload product demo video or <span className="text-[#58a6ff] hover:underline">browse files</span>
+                    </p>
+                    <p className="text-[10px] text-gray-400 mt-1">MP4, WebM, OGG, MOV · Max 20MB</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row items-center justify-between p-3.5 rounded-2xl bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] gap-4">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-20 h-14 rounded-xl overflow-hidden border border-slate-100/80 bg-slate-900 flex-shrink-0">
+                      <video
+                        src={videoPreview}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-[#c9d1d9] truncate">
+                        {videoFile.name}
+                      </p>
+                      <p className="text-[10px] text-gray-400 font-mono mt-0.5">
+                        {(videoFile.size / (1024 * 1024)).toFixed(2)} MB
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={removeVideo}
+                    className="bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold px-4 py-2 rounded-xl transition duration-200"
+                  >
+                    Delete Video
+                  </button>
                 </div>
               )}
             </div>

@@ -64,58 +64,65 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white/5 backdrop-blur-xl border-b border-white/20 shadow-[0_4px_30px_rgba(255,255,255,0.1)] sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo */}
-        <Link
-          to="/"
-          className="text-xl font-bold text-white flex items-center gap-2 flex-shrink-0"
-        >
-          <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-full object-cover" />
-          <span>CampusThrift</span>
-        </Link>
+      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-6">
+        {/* Left Side: Logo & Main Navigation Links */}
+        <div className="flex items-center gap-6 flex-grow min-w-0">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="text-2xl font-extrabold text-white flex items-center gap-2 flex-shrink-0"
+          >
+            <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-full object-cover" />
+            <span>CampusThrift</span>
+          </Link>
 
-        {/* Desktop Nav Links */}
-        <div className="hidden md:flex items-center gap-3">
-          <Link
-            to="/dashboard"
-            className="text-sm font-medium text-[#8b949e] hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/10"
-          >
-            Dashboard
-          </Link>
-          <Link
-            to="/my-listings"
-            className="text-sm font-medium text-[#8b949e] hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/10"
-          >
-            My Listings
-          </Link>
-          {isAuthenticated && (
+          {/* Desktop Nav Links */}
+          <div className="hidden md:flex items-center gap-1.5 min-w-0 overflow-hidden">
             <Link
-              to="/chat"
-              className="text-sm font-medium text-[#8b949e] hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/10"
+              to="/dashboard"
+              className="text-base font-semibold text-[#8b949e] hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/10"
             >
-              💬 Chats
+              Dashboard
             </Link>
-          )}
-          {isAuthenticated && (
             <Link
-              to="/feedback"
-              className="text-sm font-medium text-[#8b949e] hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/10"
+              to="/my-listings"
+              className="text-base font-semibold text-[#8b949e] hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/10"
             >
-              📣 Feedback
+              My Listings
             </Link>
-          )}
-          {isAuthenticated &&
-            ["admin", "moderator"].includes(user?.role || profile?.role) && (
+            {isAuthenticated && (
               <Link
-                to="/admin"
-                className="text-sm font-semibold text-white bg-white/10 border border-white/20 hover:bg-white/20 hover:text-white transition px-3 py-2 rounded-lg"
+                to="/chat"
+                className="text-base font-semibold text-[#8b949e] hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/10"
               >
-                🛡️ Admin
+                💬 Chats
               </Link>
             )}
+            {isAuthenticated && (
+              <Link
+                to="/feedback"
+                className="text-base font-semibold text-[#8b949e] hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/10"
+              >
+                📣 Feedback
+              </Link>
+            )}
+            {isAuthenticated &&
+              ["admin", "moderator"].includes(user?.role || profile?.role) && (
+                <Link
+                  to="/admin"
+                  className="text-base font-bold text-white bg-white/10 border border-white/20 hover:bg-white/20 hover:text-white transition px-3 py-2 rounded-lg"
+                >
+                  🛡️ Admin
+                </Link>
+              )}
+          </div>
+        </div>
+
+        {/* Right Side: Sell button, Bell, Profile, Logout */}
+        <div className="hidden md:flex items-center gap-3 flex-shrink-0">
           <Link
             to="/create-listing"
-            className="bg-[#238636] hover:bg-[#2ea043] text-white text-sm font-medium px-4 py-2 rounded-lg transition"
+            className="bg-[#238636] hover:bg-[#2ea043] text-white text-base font-semibold px-4 py-2 rounded-lg transition"
           >
             + Sell Item
           </Link>
@@ -166,7 +173,7 @@ export default function Navbar() {
                               navigate(notif.link);
                             }
                           }}
-                          className={`p-3 hover:bg-[#30363d]/50 transition cursor-pointer flex gap-3 items-start ${!notif.isRead ? "bg-white/5" : ""}`}
+                          className={`p-3 hover:bg-[#30363d]/50 transition cursor-pointer flex gap-3 items-start ${notif.isRead ? "" : "bg-white/5"}`}
                         >
                           <div className="w-2.5 h-2.5 rounded-full bg-[#238636] mt-1 flex-shrink-0 opacity-80" />
                           <div className="min-w-0 flex-1">
@@ -203,15 +210,25 @@ export default function Navbar() {
 
           {/* User Profile / Logout (Desktop) */}
           <div className="flex items-center gap-2 ml-2 pl-3 border-l border-white/20">
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white font-bold text-sm uppercase">
-              {user?.name?.[0] || "?"}
-            </div>
-            <span className="text-sm text-[#8b949e] hidden lg:block max-w-[100px] truncate">
-              {user?.name || "User"}
-            </span>
+            <Link to="/dashboard?tab=profile" className="flex items-center gap-2 hover:opacity-85 transition" title="Profile Settings">
+              {profile?.avatar || user?.avatar ? (
+                <img
+                  src={profile?.avatar || user?.avatar}
+                  alt="Avatar"
+                  className="w-8 h-8 rounded-full object-cover border border-white/20 animate-fadeIn"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white font-bold text-sm uppercase">
+                  {user?.name?.[0] || "?"}
+                </div>
+              )}
+              <span className="text-base text-[#8b949e] hover:text-white hidden lg:block max-w-[120px] truncate transition font-semibold">
+                {user?.name || "User"}
+              </span>
+            </Link>
             <button
               onClick={handleLogout}
-              className="text-sm text-[#8b949e] hover:text-red-500 transition ml-1 px-2 py-1 rounded hover:bg-white/10"
+              className="text-base text-[#8b949e] hover:text-red-500 transition ml-1 px-2 py-1 rounded hover:bg-white/10 font-semibold"
               title="Logout"
             >
               Logout
@@ -329,6 +346,13 @@ export default function Navbar() {
             Dashboard
           </Link>
           <Link
+            to="/dashboard?tab=profile"
+            onClick={() => setIsMenuOpen(false)}
+            className="block text-sm font-medium text-[#8b949e] hover:text-white transition py-2.5 px-3 rounded-lg hover:bg-white/5"
+          >
+            👤 Profile Settings
+          </Link>
+          <Link
             to="/my-listings"
             onClick={() => setIsMenuOpen(false)}
             className="block text-sm font-medium text-[#8b949e] hover:text-white transition py-2.5 px-3 rounded-lg hover:bg-white/5"
@@ -373,14 +397,26 @@ export default function Navbar() {
 
           {/* Profile & Logout section */}
           <div className="pt-3 border-t border-[#30363d] flex items-center justify-between px-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white font-bold text-sm uppercase">
-                {user?.name?.[0] || "?"}
-              </div>
+            <Link
+              to="/dashboard?tab=profile"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-2.5 hover:opacity-85 transition"
+            >
+              {profile?.avatar || user?.avatar ? (
+                <img
+                  src={profile?.avatar || user?.avatar}
+                  alt="Avatar"
+                  className="w-8 h-8 rounded-full object-cover border border-[#30363d]"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white font-bold text-sm uppercase">
+                  {user?.name?.[0] || "?"}
+                </div>
+              )}
               <span className="text-sm font-bold text-[#c9d1d9] truncate max-w-[120px]">
                 {user?.name || "User"}
               </span>
-            </div>
+            </Link>
             <button
               onClick={() => {
                 setIsMenuOpen(false);

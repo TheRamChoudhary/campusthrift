@@ -2,6 +2,7 @@ const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
 const Listing = require("../models/Listing");
 const User = require("../models/User");
+const Request = require("../models/Request");
 const cron = require("node-cron");
 const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
@@ -73,9 +74,14 @@ exports.getMessages = asyncHandler(async (req, res, next) => {
     { status: "read" },
   );
 
-  const messages = await Message.find({ conversation: conversationId }).sort({
-    createdAt: 1,
-  });
+  const messages = await Message.find({ conversation: conversationId })
+    .populate({
+      path: "listing",
+      select: "title price images status condition",
+    })
+    .sort({
+      createdAt: 1,
+    });
 
   res
     .status(200)
@@ -103,15 +109,12 @@ exports.startConversation = asyncHandler(async (req, res, next) => {
     throw new ApiError(404, "Recipient user not found");
   }
 
-  // Check if conversation already exists for this listing and participants
-  let query = {
+  // Group conversations strictly by participants to avoid duplicate chats in the list
+  let conversation = await Conversation.findOne({
     participants: { $all: [senderId, recipientId] },
-  };
-  if (listingId) {
-    query.listing = listingId;
-  }
+  });
 
-  let conversation = await Conversation.findOne(query);
+  const listing = listingId ? await Listing.findById(listingId) : null;
 
   if (!conversation) {
     // Check if either user has blocked the other
@@ -129,10 +132,62 @@ exports.startConversation = asyncHandler(async (req, res, next) => {
       );
     }
 
+    // Create conversation directly if it does not exist
     conversation = await Conversation.create({
       participants: [senderId, recipientId],
-      listing: listingId || undefined,
+      listing: listingId || null,
     });
+
+    if (listing) {
+      const inquiryMsg = await Message.create({
+        conversation: conversation._id,
+        sender: senderId,
+        recipient: recipientId,
+        text: `Inquired about product: "${listing.title}"`,
+        listing: listingId,
+      });
+      conversation.lastMessage = inquiryMsg._id;
+      await conversation.save();
+
+      // Emit socket events for real-time chat updates
+      const io = req.app.get("io");
+      if (io) {
+        const msgData = await Message.findById(inquiryMsg._id).populate(
+          "listing",
+          "title price images status condition",
+        );
+        const eventData = msgData.toObject();
+        io.to(recipientId.toString()).emit("messageReceived", eventData);
+        io.to(senderId.toString()).emit("messageSentSync", eventData);
+      }
+    }
+  } else {
+    // Conversation already exists. If inquiring about a different product, update active listing & send card
+    if (listingId && (!conversation.listing || conversation.listing.toString() !== listingId.toString())) {
+      conversation.listing = listingId;
+      
+      const inquiryMsg = await Message.create({
+        conversation: conversation._id,
+        sender: senderId,
+        recipient: recipientId,
+        text: `Inquired about product: "${listing.title}"`,
+        listing: listingId,
+      });
+      conversation.lastMessage = inquiryMsg._id;
+      await conversation.save();
+
+      // Emit socket events for real-time chat updates
+      const io = req.app.get("io");
+      if (io) {
+        const msgData = await Message.findById(inquiryMsg._id).populate(
+          "listing",
+          "title price images status condition",
+        );
+        const eventData = msgData.toObject();
+        io.to(recipientId.toString()).emit("messageReceived", eventData);
+        io.to(senderId.toString()).emit("messageSentSync", eventData);
+      }
+    }
   }
 
   res

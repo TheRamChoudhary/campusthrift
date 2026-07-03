@@ -19,8 +19,20 @@ export default function Home() {
     }
   });
 
-  const filteredRecentlyViewed = recentlyViewed.filter(
-    (item) => !category || item.category === category
+  const recentlyViewedIds = recentlyViewed.map((item) => item._id).join(",");
+
+  const { data: activeRecentlyViewed = [] } = useQuery({
+    queryKey: ["active-recently-viewed", recentlyViewedIds],
+    queryFn: async () => {
+      if (!recentlyViewedIds) return [];
+      const res = await api.get(`/listings?ids=${recentlyViewedIds}`);
+      return res.data.data.listings;
+    },
+    enabled: recentlyViewed.length > 0,
+  });
+
+  const filteredRecentlyViewed = activeRecentlyViewed.filter(
+    (item) => !category || item.category === category,
   );
 
   const { data, isLoading, isError } = useQuery({
@@ -98,8 +110,8 @@ export default function Home() {
         {trendingData && trendingData.length > 0 && !search && !category && !sort && (
           <div className="mb-10 bg-gradient-to-br from-indigo-50/30 to-purple-50/10 border border-indigo-100/30 rounded-3xl p-6 shadow-2xl ">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-black text-slate-800 tracking-tight flex items-center gap-2">
-                <span>🔥</span> Trending Now
+              <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
+                Trending Now
               </h2>
               <span className="text-[10px] font-black text-[#58a6ff] bg-[#388bfd]/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
                 Popular NITT Deals
@@ -116,8 +128,8 @@ export default function Home() {
         {/* Recently Viewed Row */}
         {filteredRecentlyViewed && filteredRecentlyViewed.length > 0 && !sort && !search && (
           <div className="mb-10 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] border border-slate-100 rounded-3xl p-6 shadow-2xl ">
-            <h2 className="text-base font-black text-slate-800 mb-4 tracking-tight flex items-center gap-2">
-              <span>🕒</span> Recently Viewed {category && `in ${category}`}
+            <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 tracking-tight">
+              Recently Viewed {category && `in ${category}`}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {filteredRecentlyViewed.map((listing) => (
@@ -129,7 +141,7 @@ export default function Home() {
 
         {/* Main Feed Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-base font-black text-slate-800 tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
             {search || category ? "Search Results" : "Explore Marketplace"}
           </h2>
           {data?.pagination && (

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axiosInstance";
 import Navbar from "../components/layout/Navbar";
+import useAuthStore from "../store/authStore";
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-700 border border-yellow-200",
@@ -222,6 +223,7 @@ function BuyerTab() {
 
 function SellerTab() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: requests, isLoading } = useQuery({
     queryKey: ["my-requests-seller"],
@@ -238,9 +240,15 @@ function SellerTab() {
       toast.success("Request approved!");
       queryClient.invalidateQueries({ queryKey: ["my-requests-seller"] });
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+      
+      const conversationId = resData?.data?.data?.conversationId;
+      if (conversationId) {
+        navigate(`/chat?conversationId=${conversationId}`);
+      }
     },
-    onError: (err) =>
-      toast.error(err.response?.data?.message || "Failed to approve"),
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to approve request");
+    },
   });
 
   const rejectMutation = useMutation({
@@ -401,9 +409,9 @@ function WishlistTab() {
       {wishlist.map((listing) => (
         <div
           key={listing._id}
-          className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl shadow-2xl  overflow-hidden flex flex-col justify-between transition hover:shadow-xl "
+          className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl shadow-2xl  overflow-hidden flex flex-col justify-between transition hover:shadow-xl hover:scale-[1.01] hover:border-slate-400/30"
         >
-          <div className="p-4 flex gap-3">
+          <Link to={`/listings/${listing._id}`} className="p-4 flex gap-3 cursor-pointer select-none">
             <div className="w-20 h-20 bg-[#21262d]/50 backdrop-blur-sm border border-[#30363d] dark:bg-slate-950 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
               {listing.images?.length > 0 ? (
                 <img
@@ -415,13 +423,10 @@ function WishlistTab() {
                 <span className="text-3xl">📦</span>
               )}
             </div>
-            <div className="min-w-0">
-              <Link
-                to={`/listings/${listing._id}`}
-                className="font-bold text-[#c9d1d9] dark:text-slate-100 hover:text-[#58a6ff] dark:hover:text-indigo-400 transition text-sm sm:text-base truncate block"
-              >
+            <div className="min-w-0 flex-1">
+              <h4 className="font-bold text-[#c9d1d9] dark:text-slate-100 transition text-sm sm:text-base truncate">
                 {listing.title}
-              </Link>
+              </h4>
               <p className="text-[#58a6ff] dark:text-indigo-400 font-extrabold text-sm mt-1">
                 ₹{listing.price?.toLocaleString("en-IN")}
               </p>
@@ -429,7 +434,7 @@ function WishlistTab() {
                 Seller: {listing.seller?.name || "Anonymous"}
               </p>
             </div>
-          </div>
+          </Link>
           <div className="bg-transparent/50 dark:bg-slate-950/40 px-4 py-2 border-t border-[#30363d] dark:border-slate-800 flex items-center justify-between">
             <span className="text-xs text-[#58a6ff] dark:text-indigo-400 font-semibold bg-[#388bfd]/10 dark:bg-indigo-950/30 px-2 py-0.5 rounded-md">
               {listing.category}
@@ -447,10 +452,279 @@ function WishlistTab() {
   );
 }
 
+function ProfileTab() {
+  const { user, updateUser } = useAuthStore();
+  const [selectedAvatar, setSelectedAvatar] = useState(null);
+  
+  // Get user profile details
+  const { data: profile, refetch } = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: async () => {
+      const res = await api.get("/auth/me");
+      return res.data.data;
+    },
+  });
+
+  const [formData, setFormData] = useState({
+    name: profile?.name || user?.name || "",
+    bio: profile?.bio || "",
+    department: profile?.department || "",
+    branch: profile?.branch || "",
+    hostel: profile?.hostel || "",
+    phone: profile?.phone || "",
+    avatar: profile?.avatar || user?.avatar || "",
+  });
+
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  // Sync state if query fetches updated profile data
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        name: profile.name || "",
+        bio: profile.bio || "",
+        department: profile.department || "",
+        branch: profile.branch || "",
+        hostel: profile.hostel || "",
+        phone: profile.phone || "",
+        avatar: profile.avatar || "",
+      });
+    }
+  }, [profile]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Avatar image size must be less than 5MB");
+      return;
+    }
+
+    const uploadData = new FormData();
+    uploadData.append("images", file);
+
+    setUploadingAvatar(true);
+    const loadingToastId = toast.loading("Uploading profile photo...");
+    try {
+      const res = await api.post("/listings/upload-images", uploadData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const avatarUrl = res.data.data.urls[0];
+      setFormData((prev) => ({ ...prev, avatar: avatarUrl }));
+      toast.success("Profile photo uploaded!");
+    } catch (err) {
+      toast.error("Failed to upload avatar image");
+    } finally {
+      toast.dismiss(loadingToastId);
+      setUploadingAvatar(false);
+    }
+  };
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async (updatedFields) => {
+      const res = await api.put("/auth/profile", updatedFields);
+      return res.data.data;
+    },
+    onSuccess: (updatedUser) => {
+      toast.success("Profile updated successfully!");
+      // Update global auth store state
+      updateUser({
+        ...user,
+        name: updatedUser.name,
+        avatar: updatedUser.avatar,
+      });
+      refetch();
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to update profile");
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateProfileMutation.mutate(formData);
+  };
+
+  return (
+    <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-3xl p-6 shadow-2xl space-y-6 text-[#c9d1d9]">
+      <div className="flex items-center gap-4 border-b border-[#30363d] pb-4">
+        <span className="text-2xl">👤</span>
+        <div>
+          <h2 className="text-lg font-bold">Profile Settings</h2>
+          <p className="text-xs text-[#8b949e]">Update your college identity and contact settings</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Avatar Upload */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 bg-transparent p-4 rounded-2xl border border-[#30363d]">
+          <div className="relative">
+            {formData.avatar ? (
+              <img
+                src={formData.avatar}
+                alt="Avatar Preview"
+                onClick={() => setSelectedAvatar(formData.avatar)}
+                className="w-20 h-20 rounded-full object-cover border border-[#30363d] shadow-lg cursor-zoom-in hover:opacity-90 transition"
+                title="View Full Size"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-2xl uppercase border border-[#30363d]">
+                {formData.name?.[0] || "?"}
+              </div>
+            )}
+            {uploadingAvatar && (
+              <div className="absolute inset-0 rounded-full bg-slate-900/70 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-indigo-500 border-t-transparent"></div>
+              </div>
+            )}
+          </div>
+          <div className="flex-1 space-y-1 text-center sm:text-left">
+            <p className="text-xs font-bold text-[#c9d1d9]">Profile Photo</p>
+            <p className="text-[10px] text-gray-400">Supports JPEG, PNG, or WebP. Max size 5MB.</p>
+            <label className="inline-block mt-2 bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg cursor-pointer transition">
+              Upload New Photo
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+                disabled={uploadingAvatar}
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Name Field */}
+        <div>
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+            Display Name (Full Name)
+          </label>
+          <input
+            type="text"
+            name="name"
+            required
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="e.g. Rahul Sharma"
+            className="w-full border border-[#30363d] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#58a6ff] bg-[#0d1117] text-[#c9d1d9]"
+          />
+        </div>
+
+        {/* Bio Field */}
+        <div>
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+            Short Bio
+          </label>
+          <textarea
+            name="bio"
+            rows="2"
+            value={formData.bio}
+            onChange={handleChange}
+            maxLength={200}
+            placeholder="Introduce yourself (e.g., 'Looking to buy books, selling electronics')"
+            className="w-full border border-[#30363d] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#58a6ff] bg-[#0d1117] text-[#c9d1d9] resize-none"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Department Field */}
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+              Department (Optional)
+            </label>
+            <input
+              type="text"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              placeholder="e.g. Computer Science / Mechanical"
+              className="w-full border border-[#30363d] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#58a6ff] bg-[#0d1117] text-[#c9d1d9]"
+            />
+          </div>
+
+          {/* Branch Field */}
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+              Branch / Program (Optional)
+            </label>
+            <input
+              type="text"
+              name="branch"
+              value={formData.branch}
+              onChange={handleChange}
+              placeholder="e.g. B.Tech / M.Tech"
+              className="w-full border border-[#30363d] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#58a6ff] bg-[#0d1117] text-[#c9d1d9]"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Hostel location Field */}
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+              Hostel / Location (Optional)
+            </label>
+            <input
+              type="text"
+              name="hostel"
+              value={formData.hostel}
+              onChange={handleChange}
+              placeholder="e.g. Garnet A / Opal C"
+              className="w-full border border-[#30363d] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#58a6ff] bg-[#0d1117] text-[#c9d1d9]"
+            />
+          </div>
+
+          {/* Phone Field */}
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+              Phone Number (Optional)
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="e.g. +91 9876543210"
+              className="w-full border border-[#30363d] rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#58a6ff] bg-[#0d1117] text-[#c9d1d9]"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={updateProfileMutation.isPending || uploadingAvatar}
+          className="w-full bg-[#238636] hover:bg-[#2ea043] text-white font-bold py-3 rounded-xl transition duration-200 text-xs uppercase tracking-wider disabled:opacity-50 shadow-xl"
+        >
+          {updateProfileMutation.isPending ? "Saving changes..." : "Save Profile Settings"}
+        </button>
+      </form>
+
+      {/* Profile Photo Fullscreen View Modal */}
+      {selectedAvatar && (
+        <div
+          onClick={() => setSelectedAvatar(null)}
+          className="fixed inset-0 z-50 bg-slate-950/90 flex items-center justify-center p-4 cursor-zoom-out animate-fadeIn"
+        >
+          <img
+            src={selectedAvatar}
+            alt="Profile Preview"
+            className="max-w-[85vw] max-h-[85vh] sm:max-w-md sm:max-h-md object-contain rounded-2xl border border-[#30363d] shadow-2xl animate-scaleUp"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
-  const activeTab = ["buyer", "seller", "wishlist"].includes(tabParam) ? tabParam : "buyer";
+  const activeTab = ["buyer", "seller", "wishlist", "profile"].includes(tabParam) ? tabParam : "buyer";
 
   const handleTabChange = (tabId) => {
     setSearchParams({ tab: tabId });
@@ -460,6 +734,7 @@ export default function Dashboard() {
     { id: "buyer", label: "🛒 My Requests" },
     { id: "seller", label: "📬 Incoming Requests" },
     { id: "wishlist", label: "❤️ Wishlist" },
+    { id: "profile", label: "👤 Profile Settings" },
   ];
 
   return (
@@ -493,10 +768,9 @@ export default function Dashboard() {
           {activeTab === "buyer" && <BuyerTab />}
           {activeTab === "seller" && <SellerTab />}
           {activeTab === "wishlist" && <WishlistTab />}
+          {activeTab === "profile" && <ProfileTab />}
         </div>
       </div>
-
-
     </div>
   );
 }

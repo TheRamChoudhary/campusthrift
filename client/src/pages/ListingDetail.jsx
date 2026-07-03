@@ -18,9 +18,10 @@ export default function ListingDetail() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportDescription, setReportDescription] = useState("");
+  const [selectedAvatar, setSelectedAvatar] = useState(null);
 
   // 1. Fetch listing details
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, error, isError } = useQuery({
     queryKey: ["listing", id],
     queryFn: async () => {
       const res = await api.get(`/listings/${id}`);
@@ -248,6 +249,24 @@ export default function ListingDetail() {
     },
   });
 
+  const toggleBlockSellerMutation = useMutation({
+    pointer: "toggleBlock",
+    mutationFn: async () => {
+      const res = await api.put(`/admin/users/${data?.seller?._id}/toggle-block`);
+      return res.data;
+    },
+    onSuccess: (resData) => {
+      toast.success(resData.message || "Seller status updated successfully!");
+      // Invalidate globally to remove blocked user's items from all screens immediately
+      queryClient.invalidateQueries();
+    },
+    onError: (err) => {
+      toast.error(
+        err.response?.data?.message || "Failed to update seller block status",
+      );
+    },
+  });
+
   const statusColors = {
     available: "bg-emerald-100 text-emerald-800 border border-emerald-200",
     reserved: "bg-amber-100 text-amber-800 border border-amber-200",
@@ -274,18 +293,21 @@ export default function ListingDetail() {
       </div>
     );
 
+  const isSuspendedError = error?.response?.status === 403;
+
   if (isError || !data)
     return (
       <div className="min-h-screen bg-transparent">
         <Navbar />
         <div className="text-center py-32 px-4 max-w-md mx-auto">
-          <span className="text-6xl block mb-4">🔍</span>
+          <span className="text-6xl block mb-4">{isSuspendedError ? "🚫" : "🔍"}</span>
           <h2 className="text-xl font-bold text-[#c9d1d9]">
-            Listing Not Found
+            {isSuspendedError ? "Seller Suspended" : "Listing Not Found"}
           </h2>
-          <p className="text-[#8b949e] text-sm mt-1">
-            This product might have been deleted by the seller or moderated by
-            the admin team.
+          <p className="text-gray-400 text-xs mt-2 leading-relaxed">
+            {isSuspendedError
+              ? error.response?.data?.message || "This listing is unavailable because the seller has been blocked."
+              : "This product might have been deleted by the seller or moderated by the admin team."}
           </p>
           <button
             onClick={() => navigate("/")}
@@ -296,6 +318,13 @@ export default function ListingDetail() {
         </div>
       </div>
     );
+
+  const mediaItems = data
+    ? [
+        ...(data.images || []).map((url) => ({ type: "image", url })),
+        ...(data.video ? [{ type: "video", url: data.video }] : []),
+      ]
+    : [];
 
   return (
     <div className="min-h-screen bg-transparent">
@@ -308,52 +337,77 @@ export default function ListingDetail() {
           <div className="lg:col-span-7 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-3xl border border-slate-100/80 shadow-2xl  p-5 space-y-4">
             {/* Aspect-ratio Locked Main Image viewport */}
             <div
-              onClick={() => setIsFullscreenModalOpen(true)}
-              className="relative aspect-video rounded-2xl overflow-hidden bg-slate-900 flex items-center justify-center cursor-zoom-in group shadow-inner"
+              onClick={() => {
+                const activeMedia = mediaItems[activeImageIndex];
+                if (activeMedia && activeMedia.type === "image") {
+                  setIsFullscreenModalOpen(true);
+                }
+              }}
+              className={`relative aspect-video rounded-2xl overflow-hidden bg-transparent flex items-center justify-center shadow-inner ${
+                mediaItems[activeImageIndex]?.type === "image" ? "cursor-zoom-in group" : ""
+              }`}
             >
-              {data.images && data.images.length > 0 ? (
-                <img
-                  src={data.images[activeImageIndex]}
-                  alt={data.title}
-                  className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                />
+              {mediaItems.length > 0 ? (
+                mediaItems[activeImageIndex]?.type === "video" ? (
+                  <video
+                    src={mediaItems[activeImageIndex]?.url}
+                    controls
+                    className="w-full h-full object-contain"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                ) : (
+                  <img
+                    src={mediaItems[activeImageIndex]?.url}
+                    alt={data.title}
+                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                  />
+                )
               ) : (
                 <span className="text-9xl">📦</span>
               )}
 
               {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <span className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]/90 backdrop-blur-sm text-slate-800 px-4 py-2 rounded-xl text-xs font-bold shadow-xl  flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                  🔍 Click for Fullscreen Preview
-                </span>
-              </div>
+              {mediaItems[activeImageIndex]?.type === "image" && (
+                <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]/90 backdrop-blur-sm text-slate-800 px-4 py-2 rounded-xl text-xs font-bold shadow-xl  flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                    🔍 Click for Fullscreen Preview
+                  </span>
+                </div>
+              )}
 
               {/* Image Counter Indicator */}
-              {data.images && data.images.length > 0 && (
+              {mediaItems.length > 0 && (
                 <span className="absolute bottom-4 right-4 bg-slate-950/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider font-mono">
-                  {activeImageIndex + 1} / {data.images.length}
+                  {activeImageIndex + 1} / {mediaItems.length}
                 </span>
               )}
             </div>
 
             {/* Thumbnail Slider */}
-            {data.images && data.images.length > 1 && (
+            {mediaItems.length > 1 && (
               <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-thin">
-                {data.images.map((src, i) => (
+                {mediaItems.map((item, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImageIndex(i)}
-                    className={`relative w-20 h-20 rounded-xl overflow-hidden bg-slate-950 flex-shrink-0 border-2 transition-all duration-200 ${
+                    className={`relative w-20 h-20 rounded-xl overflow-hidden bg-transparent flex-shrink-0 border-2 transition-all duration-200 ${
                       i === activeImageIndex
                         ? "border-indigo-500 ring-2 ring-[#58a6ff]/20 scale-95 shadow-2xl "
                         : "border-transparent hover:border-indigo-200"
                     }`}
                   >
-                    <img
-                      src={src}
-                      alt={`Thumbnail ${i}`}
-                      className="w-full h-full object-cover"
-                    />
+                    {item.type === "video" ? (
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-slate-850 text-white gap-1 select-none">
+                        <span className="text-lg">🎥</span>
+                        <span className="text-[7px] uppercase tracking-wider font-extrabold text-white/90">Video</span>
+                      </div>
+                    ) : (
+                      <img
+                        src={item.url}
+                        alt={`Thumbnail ${i}`}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </button>
                 ))}
               </div>
@@ -444,18 +498,54 @@ export default function ListingDetail() {
               </h3>
 
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-base uppercase shadow-xl  flex-shrink-0">
-                  {data.seller?.name?.[0] || "?"}
-                </div>
-                <div className="min-w-0">
+                {data.seller?.avatar ? (
+                  <img
+                    src={data.seller.avatar}
+                    alt={data.seller.name}
+                    onClick={() => setSelectedAvatar(data.seller.avatar)}
+                    className="w-12 h-12 rounded-full object-cover border border-slate-200/50 shadow-xl flex-shrink-0 cursor-zoom-in hover:opacity-90 transition"
+                    title="View Profile Photo"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-base uppercase shadow-xl  flex-shrink-0">
+                    {data.seller?.name?.[0] || "?"}
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
                   <p className="font-extrabold text-slate-800 text-sm truncate">
                     {isSeller ? `${data.seller?.name} (You)` : data.seller?.name}
                   </p>
-                  <p className="text-xs text-gray-400 truncate mt-0.5">
+                  <p className="text-xs text-gray-450 truncate mt-0.5 font-medium">
                     {data.seller?.email}
                   </p>
                 </div>
               </div>
+
+              {/* Optional College & Profile details */}
+              {(data.seller?.bio || data.seller?.department || data.seller?.branch || data.seller?.hostel || data.seller?.phone) && (
+                <div className="border-t border-slate-100/80 pt-3 space-y-1.5 text-xs">
+                  {data.seller?.bio && (
+                    <p className="text-slate-600 italic leading-relaxed">
+                      "{data.seller.bio}"
+                    </p>
+                  )}
+                  {(data.seller?.department || data.seller?.branch) && (
+                    <p className="text-slate-500 font-medium">
+                      🎓 {data.seller.department}{data.seller.branch ? ` (${data.seller.branch})` : ""}
+                    </p>
+                  )}
+                  {data.seller?.hostel && (
+                    <p className="text-slate-500 font-medium">
+                      🏠 Hostel: {data.seller.hostel}
+                    </p>
+                  )}
+                  {data.seller?.phone && (
+                    <p className="text-slate-500 font-medium font-mono text-[11px]">
+                      📞 Contact: {data.seller.phone}
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Trust Score Progress Bar Integration */}
               <div className="bg-[#388bfd]/10/50 border border-indigo-100/30 rounded-2xl p-4 space-y-2">
@@ -615,28 +705,55 @@ export default function ListingDetail() {
                     Administrative Moderation View
                   </h3>
                 </div>
-                <p className="text-slate-600 text-xs leading-relaxed">
+                <p className="text-slate-650 text-xs leading-relaxed">
                   As a moderator or system admin, you have strict bypass access.
-                  You can instantly audit, restrict, or wipe listings violating
-                  NITT marketplace rules.
+                  You can forcefully delete this listing or suspend/block this seller's account.
                 </p>
-                <button
-                  onClick={() => {
-                    if (
-                      confirm(
-                        "AUDIT ACTION: Are you sure you want to forcefully delete this listing? This action will audit logs.",
-                      )
-                    ) {
-                      deleteListingMutation.mutate();
-                    }
-                  }}
-                  disabled={deleteListingMutation.isPending}
-                  className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-2xl text-xs transition duration-200 shadow-xl  hover:shadow-rose-500/20 disabled:opacity-50"
-                >
-                  {deleteListingMutation.isPending
-                    ? "Moderating..."
-                    : "🗑️ Force Delete Listing"}
-                </button>
+                <div className="flex flex-col gap-2.5">
+                  <button
+                    onClick={() => {
+                      if (
+                        confirm(
+                          "AUDIT ACTION: Are you sure you want to forcefully delete this listing? This action will write to audit logs.",
+                        )
+                      ) {
+                        deleteListingMutation.mutate();
+                      }
+                    }}
+                    disabled={deleteListingMutation.isPending}
+                    className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-2xl text-xs transition duration-200 shadow-xl disabled:opacity-50"
+                  >
+                    {deleteListingMutation.isPending
+                      ? "Moderating..."
+                      : "🗑️ Force Delete Listing"}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      if (
+                        confirm(
+                          `AUDIT ACTION: Are you sure you want to ${
+                            data.seller?.isBlocked ? "UNBLOCK" : "BLOCK"
+                          } seller "${data.seller?.name}"?`,
+                        )
+                      ) {
+                        toggleBlockSellerMutation.mutate();
+                      }
+                    }}
+                    disabled={toggleBlockSellerMutation.isPending}
+                    className={`w-full font-bold py-3.5 rounded-2xl text-xs transition duration-200 shadow-xl disabled:opacity-50 ${
+                      data.seller?.isBlocked
+                        ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                        : "bg-amber-600 hover:bg-amber-700 text-white"
+                    }`}
+                  >
+                    {toggleBlockSellerMutation.isPending
+                      ? "Processing..."
+                      : data.seller?.isBlocked
+                      ? "🔓 Reinstate Seller Account"
+                      : "🚫 Suspend Seller Account"}
+                  </button>
+                </div>
               </div>
             )}
 
@@ -991,6 +1108,20 @@ export default function ListingDetail() {
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {/* Profile Photo Fullscreen View Modal */}
+      {selectedAvatar && (
+        <div
+          onClick={() => setSelectedAvatar(null)}
+          className="fixed inset-0 z-50 bg-slate-950/90 flex items-center justify-center p-4 cursor-zoom-out animate-fadeIn"
+        >
+          <img
+            src={selectedAvatar}
+            alt="Profile Preview"
+            className="max-w-[85vw] max-h-[85vh] sm:max-w-md sm:max-h-md object-contain rounded-2xl border border-[#30363d] shadow-2xl animate-scaleUp"
+          />
         </div>
       )}
     </div>

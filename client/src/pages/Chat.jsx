@@ -26,20 +26,7 @@ export default function Chat() {
   const typingTimeoutRef = useRef(null);
   const chatFileInputRef = useRef(null);
 
-  const emojis = [
-    "😀",
-    "👍",
-    "❤️",
-    "🎉",
-    "😮",
-    "😢",
-    "🔥",
-    "🚀",
-    "💯",
-    "👏",
-    "💡",
-    "✅",
-  ];
+  const emojis = ["👍", "🤝", "✅", "📍", "💰", "❤️", "❓"];
 
   // 1. Fetch conversations list
   const {
@@ -419,10 +406,27 @@ export default function Chat() {
                     }`}
                   >
                     {/* Glowing Avatar */}
-                    <div className="relative flex-shrink-0">
-                      <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-indigo-100 to-purple-100 border border-indigo-200 flex items-center justify-center font-bold text-sm text-[#58a6ff] uppercase shadow-2xl ">
-                        {conv.recipient?.name?.[0] || "?"}
-                      </div>
+                    <div
+                      className="relative flex-shrink-0 cursor-pointer hover:scale-105 transition"
+                      onClick={(e) => {
+                        if (conv.recipient?.avatar) {
+                          e.stopPropagation(); // Prevent opening the conversation on click
+                          setSelectedChatImage(conv.recipient.avatar);
+                        }
+                      }}
+                      title="View Profile Photo"
+                    >
+                      {conv.recipient?.avatar ? (
+                        <img
+                          src={conv.recipient.avatar}
+                          alt={conv.recipient.name}
+                          className="w-11 h-11 rounded-full object-cover border border-slate-200/50 shadow-2xl"
+                        />
+                      ) : (
+                        <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-indigo-100 to-purple-100 border border-indigo-200 flex items-center justify-center font-bold text-sm text-[#58a6ff] uppercase shadow-2xl ">
+                          {conv.recipient?.name?.[0] || "?"}
+                        </div>
+                      )}
                       <span
                         className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white shadow-2xl  transition-colors duration-300 ${
                           isOnline
@@ -512,10 +516,26 @@ export default function Chat() {
                     ←
                   </button>
 
-                  <div className="relative flex-shrink-0">
-                    <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-black text-sm text-white uppercase shadow-xl ">
-                      {recipient.name?.[0] || "?"}
-                    </div>
+                  <div
+                    className="relative flex-shrink-0 cursor-pointer hover:scale-105 transition"
+                    onClick={() => {
+                      if (recipient.avatar) {
+                        setSelectedChatImage(recipient.avatar);
+                      }
+                    }}
+                    title="View Profile Photo"
+                  >
+                    {recipient.avatar ? (
+                      <img
+                        src={recipient.avatar}
+                        alt={recipient.name}
+                        className="w-11 h-11 rounded-full object-cover border border-slate-250/20 shadow-xl"
+                      />
+                    ) : (
+                      <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-black text-sm text-white uppercase shadow-xl ">
+                        {recipient.name?.[0] || "?"}
+                      </div>
+                    )}
                     <span
                       className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white shadow-2xl  transition-colors duration-300 ${
                         onlineStatuses[recipient._id] === "online"
@@ -668,11 +688,7 @@ export default function Chat() {
                         <div className="flex flex-col max-w-full">
                           {/* Bubble Container */}
                           <div
-                            className={`relative px-4 py-3 rounded-2xl text-xs leading-relaxed break-words whitespace-pre-wrap shadow-2xl  border transition-transform duration-150 hover:scale-[1.005] ${
-                              isMyMessage
-                                ? "bg-[#238636] text-white rounded-tr-none border-indigo-500/10"
-                                : "bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] text-slate-800 rounded-tl-none border-slate-100/80"
-                            }`}
+                            className="relative px-4 py-3 rounded-2xl text-sm sm:text-base font-semibold leading-relaxed break-words whitespace-pre-wrap shadow-2xl border border-emerald-700/10 transition-transform duration-150 hover:scale-[1.005] bg-[#238636] text-white"
                           >
                             {/* Rendering image messages if shared */}
                             {msg.image ? (
@@ -688,20 +704,47 @@ export default function Chat() {
                               </div>
                             ) : null}
 
+                            {/* Render product card inline if message is a listing inquiry */}
+                            {msg.listing && (
+                              <div className="bg-slate-950/20 backdrop-blur-sm rounded-xl p-2.5 mb-2 flex gap-2.5 border border-white/5 select-none text-white max-w-[280px]">
+                                <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-950 flex-shrink-0 border border-white/5">
+                                  {msg.listing.images?.length > 0 ? (
+                                    <img
+                                      src={msg.listing.images[0]}
+                                      alt={msg.listing.title}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-[10px]">
+                                      📦
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <Link
+                                    to={`/listings/${msg.listing._id}`}
+                                    className="text-[11px] font-bold text-white hover:underline transition truncate block"
+                                  >
+                                    {msg.listing.title}
+                                  </Link>
+                                  <p className="text-xs font-extrabold text-emerald-350 mt-0.5">
+                                    ₹{msg.listing.price?.toLocaleString("en-IN")}
+                                  </p>
+                                  <span className="text-[7px] font-bold uppercase tracking-widest bg-white/10 text-white px-1.5 py-0.5 rounded mt-1 inline-block">
+                                    {msg.listing.status}
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+
                             {/* Render text text if exists */}
                             {msg.text && (
                               <p className="font-sans pr-10">{msg.text}</p>
                             )}
 
                             {/* Time & Receipt status inside bottom right absolute */}
-                            <div className="absolute bottom-1 right-2.5 flex items-center gap-1 mt-1 text-[8px] font-mono font-bold select-none opacity-80">
-                              <span
-                                className={
-                                  isMyMessage
-                                    ? "text-indigo-200"
-                                    : "text-slate-400"
-                                }
-                              >
+                            <div className="absolute bottom-1 right-2.5 flex items-center gap-1 mt-1 text-[9px] font-mono font-bold select-none opacity-80">
+                              <span className="text-white/80">
                                 {formattedTime}
                               </span>
                               {isMyMessage && renderMessageStatus(msg)}

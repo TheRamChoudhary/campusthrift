@@ -17,9 +17,33 @@ exports.getAllListings = asyncHandler(async (req, res, next) => {
     sort,
     page = 1,
     limit = 12,
+    ids,
   } = req.query;
 
-  const query = { status: "available" };
+  const blockedUsers = await User.find({ isBlocked: true }).select("_id");
+  const blockedUserIds = blockedUsers.map((u) => u._id);
+
+  // If user is logged in, also filter out their personally blocked users
+  // AND users who have personally blocked them!
+  if (req.user) {
+    if (req.user.blockedUsers && req.user.blockedUsers.length > 0) {
+      blockedUserIds.push(...req.user.blockedUsers);
+    }
+    // Find users who personally blocked the logged-in user
+    const usersWhoBlockedMe = await User.find({ blockedUsers: req.user._id }).select("_id");
+    const blockedMeIds = usersWhoBlockedMe.map((u) => u._id);
+    blockedUserIds.push(...blockedMeIds);
+  }
+
+  const query = {
+    status: "available",
+    seller: { $nin: blockedUserIds },
+  };
+
+  if (ids) {
+    const idList = ids.split(",");
+    query._id = { $in: idList };
+  }
 
   // Search
   if (search) {
@@ -70,10 +94,30 @@ exports.getAllListings = asyncHandler(async (req, res, next) => {
 exports.getListingById = asyncHandler(async (req, res, next) => {
   const listing = await Listing.findById(req.params.id).populate(
     "seller",
-    "name email phone",
+    "name email phone isBlocked blockedUsers avatar bio department branch hostel",
   );
 
   if (!listing) throw new ApiError(404, "Listing not found");
+
+  if (listing.seller && listing.seller.isBlocked) {
+    throw new ApiError(403, "This listing is unavailable because the seller has been blocked");
+  }
+
+  // Check personal blocks
+  if (req.user && listing.seller) {
+    const sellerIdStr = listing.seller._id.toString();
+    const myIdStr = req.user._id.toString();
+    
+    // Did I block the seller?
+    const iBlockedSeller = req.user.blockedUsers && req.user.blockedUsers.some(id => id.toString() === sellerIdStr);
+    
+    // Did the seller block me?
+    const sellerBlockedMe = listing.seller.blockedUsers && listing.seller.blockedUsers.some(id => id.toString() === myIdStr);
+    
+    if (iBlockedSeller || sellerBlockedMe) {
+      throw new ApiError(403, "This listing is unavailable due to communication blocks");
+    }
+  }
 
   res
     .status(200)
@@ -86,10 +130,16 @@ exports.createListing = asyncHandler(async (req, res, next) => {
 
   // Upload images to Cloudinary if provided
   let imageUrls = [];
-  if (req.files && req.files.length > 0) {
+  if (req.files && req.files.images && req.files.images.length > 0) {
     imageUrls = await Promise.all(
-      req.files.map((file) => uploadToCloudinary(file.buffer)),
+      req.files.images.map((file) => uploadToCloudinary(file.buffer, false)),
     );
+  }
+
+  // Upload video to Cloudinary if provided
+  let videoUrl = "";
+  if (req.files && req.files.video && req.files.video.length > 0) {
+    videoUrl = await uploadToCloudinary(req.files.video[0].buffer, true);
   }
 
   const listing = await Listing.create({
@@ -100,6 +150,7 @@ exports.createListing = asyncHandler(async (req, res, next) => {
     condition,
     tags,
     images: imageUrls,
+    video: videoUrl,
     seller: req.user._id,
   });
 
@@ -120,10 +171,15 @@ exports.updateListing = asyncHandler(async (req, res, next) => {
   const updateData = { ...req.body };
 
   // Upload new images to Cloudinary if provided
-  if (req.files && req.files.length > 0) {
+  if (req.files && req.files.images && req.files.images.length > 0) {
     updateData.images = await Promise.all(
-      req.files.map((file) => uploadToCloudinary(file.buffer)),
+      req.files.images.map((file) => uploadToCloudinary(file.buffer, false)),
     );
+  }
+
+  // Upload new video to Cloudinary if provided
+  if (req.files && req.files.video && req.files.video.length > 0) {
+    updateData.video = await uploadToCloudinary(req.files.video[0].buffer, true);
   }
 
   const updated = await Listing.findByIdAndUpdate(req.params.id, updateData, {

@@ -136,9 +136,8 @@ export default function AdminDashboard() {
       toast.success(
         `Account status updated: ${data.isBlocked ? "Blocked" : "Unblocked"}`,
       );
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-audit-logs"] });
+      // Invalidate all queries globally so that blocked users' listings disappear from all feeds instantly
+      queryClient.invalidateQueries();
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || "Unauthorized action");
@@ -185,86 +184,84 @@ export default function AdminDashboard() {
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Portal Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-black text-[#c9d1d9] tracking-tight flex items-center gap-2">
-              <span>🛡️</span> University Control Panel
-            </h1>
-            <p className="text-xs text-[#8b949e] font-bold tracking-wide uppercase mt-1">
-              NIT Tiruchirappalli Campus Portal • Role:{" "}
-              <span className="text-[#58a6ff] font-black">
-                {profile.role.toUpperCase()}
-              </span>
-            </p>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-black text-[#c9d1d9] tracking-tight flex items-center gap-2">
+            <span>🛡️</span> University Control Panel
+          </h1>
+          <p className="text-xs text-[#8b949e] font-bold tracking-wide uppercase mt-1">
+            NIT Tiruchirappalli Campus Portal • Role:{" "}
+            <span className="text-[#58a6ff] font-black">
+              {profile.role.toUpperCase()}
+            </span>
+          </p>
+        </div>
 
-          {/* Tab Selection Row */}
-          <div className="flex bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-xl p-1 border border-[#30363d] shadow-2xl  flex-wrap gap-1">
+        {/* Tab Selection Row */}
+        <div className="flex bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl p-1.5 shadow-2xl mb-8 flex-wrap gap-1.5 w-full">
+          <button
+            onClick={() => setActiveTab("analytics")}
+            className={`flex-1 sm:flex-initial px-5 py-3 text-xs sm:text-sm font-bold rounded-xl transition text-center ${
+              activeTab === "analytics"
+                ? "bg-[#238636] text-white shadow-xl"
+                : "text-[#8b949e] hover:text-white hover:bg-white/5"
+            }`}
+          >
+            📊 Stats
+          </button>
+          <button
+            onClick={() => setActiveTab("users")}
+            className={`flex-1 sm:flex-initial px-5 py-3 text-xs sm:text-sm font-bold rounded-xl transition text-center ${
+              activeTab === "users"
+                ? "bg-[#238636] text-white shadow-xl"
+                : "text-[#8b949e] hover:text-white hover:bg-white/5"
+            }`}
+          >
+            👥 Students
+          </button>
+          <button
+            onClick={() => setActiveTab("listings")}
+            className={`flex-1 sm:flex-initial px-5 py-3 text-xs sm:text-sm font-bold rounded-xl transition text-center ${
+              activeTab === "listings"
+                ? "bg-[#238636] text-white shadow-xl"
+                : "text-[#8b949e] hover:text-white hover:bg-white/5"
+            }`}
+          >
+            🛍️ Listings
+          </button>
+          <button
+            onClick={() => setActiveTab("complaints")}
+            className={`flex-1 sm:flex-initial px-5 py-3 text-xs sm:text-sm font-bold rounded-xl transition text-center ${
+              activeTab === "complaints"
+                ? "bg-[#238636] text-white shadow-xl"
+                : "text-[#8b949e] hover:text-white hover:bg-white/5"
+            }`}
+          >
+            🚨 Complaints
+          </button>
+          {isAdmin && (
             <button
-              onClick={() => setActiveTab("analytics")}
-              className={`px-4 py-2 text-xs font-bold rounded-lg transition ${
-                activeTab === "analytics"
-                  ? "bg-[#238636] text-white shadow"
-                  : "text-[#8b949e] hover:text-[#8b949e]"
+              onClick={() => setActiveTab("logs")}
+              className={`flex-1 sm:flex-initial px-5 py-3 text-xs sm:text-sm font-bold rounded-xl transition text-center ${
+                activeTab === "logs"
+                  ? "bg-[#238636] text-white shadow-xl"
+                  : "text-[#8b949e] hover:text-white hover:bg-white/5"
               }`}
             >
-              📊 Stats
+              📜 Audit Logs
             </button>
+          )}
+          {isAdmin && (
             <button
-              onClick={() => setActiveTab("users")}
-              className={`px-4 py-2 text-xs font-bold rounded-lg transition ${
-                activeTab === "users"
-                  ? "bg-[#238636] text-white shadow"
-                  : "text-[#8b949e] hover:text-[#8b949e]"
+              onClick={() => setActiveTab("provision")}
+              className={`flex-1 sm:flex-initial px-5 py-3 text-xs sm:text-sm font-bold rounded-xl transition text-center ${
+                activeTab === "provision"
+                  ? "bg-[#238636] text-white shadow-xl"
+                  : "text-[#8b949e] hover:text-white hover:bg-white/5"
               }`}
             >
-              👥 Students
+              🔑 Provision Accounts
             </button>
-            <button
-              onClick={() => setActiveTab("listings")}
-              className={`px-4 py-2 text-xs font-bold rounded-lg transition ${
-                activeTab === "listings"
-                  ? "bg-[#238636] text-white shadow"
-                  : "text-[#8b949e] hover:text-[#8b949e]"
-              }`}
-            >
-              🛍️ Listings
-            </button>
-            <button
-              onClick={() => setActiveTab("complaints")}
-              className={`px-4 py-2 text-xs font-bold rounded-lg transition ${
-                activeTab === "complaints"
-                  ? "bg-[#238636] text-white shadow"
-                  : "text-[#8b949e] hover:text-[#8b949e]"
-              }`}
-            >
-              🚨 Complaints
-            </button>
-            {isAdmin && (
-              <button
-                onClick={() => setActiveTab("logs")}
-                className={`px-4 py-2 text-xs font-bold rounded-lg transition ${
-                  activeTab === "logs"
-                    ? "bg-[#238636] text-white shadow"
-                    : "text-[#8b949e] hover:text-[#8b949e]"
-                }`}
-              >
-                📜 Audit Logs
-              </button>
-            )}
-            {isAdmin && (
-              <button
-                onClick={() => setActiveTab("provision")}
-                className={`px-4 py-2 text-xs font-bold rounded-lg transition ${
-                  activeTab === "provision"
-                    ? "bg-[#238636] text-white shadow"
-                    : "text-[#8b949e] hover:text-[#8b949e]"
-                }`}
-              >
-                🔑 Provision Accounts
-              </button>
-            )}
-          </div>
+          )}
         </div>
 
         {/* -------------------- STATS TAB -------------------- */}

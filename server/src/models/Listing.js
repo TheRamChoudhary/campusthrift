@@ -38,6 +38,10 @@ const listingSchema = new mongoose.Schema(
         type: String,
       },
     ],
+    video: {
+      type: String,
+      default: "",
+    },
     seller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

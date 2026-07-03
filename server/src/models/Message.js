@@ -20,6 +20,10 @@ const messageSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    listing: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Listing",
+    },
     text: {
       type: String,
       trim: true,
