@@ -44,5 +44,5 @@ server/src/utils/test_upgrades.js
 
 # ===== Uploaded media / photos (large binary files) =====
 photos/
-background_image.png
+/background_image.png
 client/public/fix_background.png
