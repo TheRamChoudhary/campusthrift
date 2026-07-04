@@ -164,7 +164,11 @@ exports.updateListing = asyncHandler(async (req, res, next) => {
   const listing = await Listing.findById(req.params.id);
 
   if (!listing) throw new ApiError(404, "Listing not found");
-  if (listing.seller.toString() !== req.user._id.toString()) {
+
+  const isAdmin = req.user.role === "admin" || req.user.role === "moderator";
+  const isSeller = listing.seller.toString() === req.user._id.toString();
+
+  if (!isSeller && !isAdmin) {
     throw new ApiError(403, "Not authorized to update this listing");
   }
 

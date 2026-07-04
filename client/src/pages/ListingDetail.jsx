@@ -211,8 +211,11 @@ export default function ListingDetail() {
       return res.data;
     },
     onSuccess: (res) => {
-      toast.success(`Listing marked as ${res.data.status}!`);
+      const newStatus = res.data?.status || "updated";
+      toast.success(`Listing marked as ${newStatus}! ✅`);
       queryClient.invalidateQueries({ queryKey: ["listing", id] });
+      queryClient.invalidateQueries({ queryKey: ["listings"] });
+      queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     },
     onError: (err) => {
       toast.error(

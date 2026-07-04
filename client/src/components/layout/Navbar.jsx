@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "../../store/authStore";
@@ -15,6 +15,9 @@ export default function Navbar() {
   // Notifications Dropdown state
   const [isNotifDropdownOpen, setIsNotifDropdownOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Ref for click-outside detection on notification dropdown
+  const notifRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,6 +38,18 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  // Click-outside handler for notification dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setIsNotifDropdownOpen(false);
+      }
+    };
+    if (isNotifDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isNotifDropdownOpen]);
 
   const { data: profile } = useQuery({
     queryKey: ["user-profile"],
@@ -74,8 +89,6 @@ export default function Navbar() {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
-
-
 
   const handleLogout = () => {
     logout();
@@ -150,11 +163,14 @@ export default function Navbar() {
             + Sell Item
           </Link>
 
-          {/* Notifications Bell (Desktop) */}
+          {/* ─── Single Notification Bell (works on both desktop & mobile) ─── */}
           {isAuthenticated && (
-            <div className="relative ml-1">
+            <div className="relative" ref={notifRef}>
               <button
-                onClick={() => setIsNotifDropdownOpen(!isNotifDropdownOpen)}
+                onClick={() => {
+                  setIsNotifDropdownOpen(!isNotifDropdownOpen);
+                  setIsMenuOpen(false);
+                }}
                 className="relative p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition flex items-center justify-center animate-fadeIn"
                 title="Notifications"
               >
@@ -169,22 +185,27 @@ export default function Navbar() {
               </button>
 
               {isNotifDropdownOpen && (
-                <div className="absolute right-0 mt-3 w-80 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl py-3 z-50 text-white animate-scaleUp">
-                  <div className="flex items-center justify-between px-4 pb-2 border-b border-[#333333]">
-                    <span className="font-extrabold text-xs text-white">
-                      Notifications
+                <div className="absolute right-0 mt-3 w-96 max-w-[calc(100vw-2rem)] bg-black/90 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl py-3 z-50 text-white animate-scaleUp">
+                  <div className="flex items-center justify-between px-5 pb-3 border-b border-white/10">
+                    <span className="font-extrabold text-sm text-white flex items-center gap-2">
+                      🔔 Notifications
+                      {unreadCount > 0 && (
+                        <span className="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                          {unreadCount} new
+                        </span>
+                      )}
                     </span>
                     {unreadCount > 0 && (
                       <button
                         onClick={() => markAllReadMutation.mutate()}
-                        className="text-[10px] font-bold text-gray-455 hover:text-white transition text-gray-400"
+                        className="text-[11px] font-bold text-white/50 hover:text-white transition"
                       >
                         Mark all read
                       </button>
                     )}
                   </div>
 
-                  <div className="max-h-64 overflow-y-auto divide-y divide-[#333333]">
+                  <div className="max-h-80 overflow-y-auto divide-y divide-white/5">
                     {notifications && notifications.length > 0 ? (
                       notifications.map((notif) => (
                         <div
@@ -198,17 +219,17 @@ export default function Navbar() {
                               navigate(notif.link);
                             }
                           }}
-                          className={`p-3 hover:bg-white/5 transition cursor-pointer flex gap-3 items-start ${notif.isRead ? "" : "bg-white/5"}`}
+                          className={`px-5 py-4 hover:bg-white/5 transition cursor-pointer flex gap-3 items-start ${notif.isRead ? "" : "bg-white/5"}`}
                         >
-                          <div className="w-2.5 h-2.5 rounded-full bg-[#1DB954] mt-1 flex-shrink-0 opacity-80" />
+                          <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${notif.isRead ? "bg-white/20" : "bg-[#1DB954]"}`} />
                           <div className="min-w-0 flex-1">
-                            <p className="text-[11px] font-black text-white truncate">
+                            <p className="text-[13px] font-bold text-white leading-snug">
                               {notif.title}
                             </p>
-                            <p className="text-[10px] text-white/60 leading-relaxed mt-0.5">
+                            <p className="text-[12px] text-white/60 leading-relaxed mt-0.5">
                               {notif.message}
                             </p>
-                            <p className="text-[8px] text-white/40 font-mono mt-1">
+                            <p className="text-[10px] text-white/30 font-mono mt-1.5">
                               {new Date(notif.createdAt).toLocaleTimeString(
                                 [],
                                 { hour: "2-digit", minute: "2-digit" },
@@ -218,12 +239,15 @@ export default function Navbar() {
                         </div>
                       ))
                     ) : (
-                      <div className="text-center py-8">
-                        <span className="text-3xl block mb-2 opacity-50">
+                      <div className="text-center py-12">
+                        <span className="text-4xl block mb-3 opacity-40">
                           📭
                         </span>
-                        <p className="text-xs text-gray-400 font-semibold">
+                        <p className="text-sm text-white/40 font-semibold">
                           All caught up!
+                        </p>
+                        <p className="text-[11px] text-white/25 mt-1">
+                          No new notifications
                         </p>
                       </div>
                     )}
@@ -232,6 +256,7 @@ export default function Navbar() {
               )}
             </div>
           )}
+
           <div className="hidden lg:flex items-center border-l border-[#333333] pl-4">
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
@@ -276,103 +301,19 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile controls & toggle button */}
+          {/* Mobile hamburger toggle (NO second bell here) */}
           <div className="flex items-center gap-2 lg:hidden">
-          {/* Notifications (Mobile) */}
-          {isAuthenticated && (
-            <div className="relative">
-              <button
-                onClick={() => {
-                  setIsNotifDropdownOpen(!isNotifDropdownOpen);
-                  setIsMenuOpen(false);
-                }}
-                className="relative p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition flex items-center justify-center"
-              >
-                <span className="text-lg">🔔</span>
-                {unreadCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white rounded-full text-[9px] font-black w-4 h-4 flex items-center justify-center border border-white animate-pulse">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-
-              {isNotifDropdownOpen && (
-                <div className="absolute right-[-60px] mt-3 w-72 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl py-3 z-50 text-white animate-scaleUp">
-                  <div className="flex items-center justify-between px-4 pb-2 border-b border-[#333333]">
-                    <span className="font-extrabold text-xs text-white">
-                      Notifications
-                    </span>
-                    {unreadCount > 0 && (
-                      <button
-                        onClick={() => markAllReadMutation.mutate()}
-                        className="text-[10px] font-bold text-gray-455 hover:text-white transition text-gray-400"
-                      >
-                        Mark all read
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="max-h-64 overflow-y-auto divide-y divide-[#333333]">
-                    {notifications && notifications.length > 0 ? (
-                      notifications.map((notif) => (
-                        <div
-                          key={notif._id}
-                          onClick={() => {
-                            if (!notif.isRead) {
-                              markReadMutation.mutate(notif._id);
-                            }
-                            setIsNotifDropdownOpen(false);
-                            if (notif.link) {
-                              navigate(notif.link);
-                            }
-                          }}
-                          className={`p-3 hover:bg-white/5 transition cursor-pointer flex gap-3 items-start ${!notif.isRead ? "bg-white/5" : ""}`}
-                        >
-                          <div className="w-2.5 h-2.5 rounded-full bg-[#1DB954] mt-1 flex-shrink-0 opacity-80" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[11px] font-black text-white truncate">
-                              {notif.title}
-                            </p>
-                            <p className="text-[10px] text-white/60 leading-relaxed mt-0.5">
-                              {notif.message}
-                            </p>
-                            <p className="text-[8px] text-white/40 font-mono mt-1">
-                              {new Date(notif.createdAt).toLocaleTimeString(
-                                [],
-                                { hour: "2-digit", minute: "2-digit" },
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-8">
-                        <span className="text-3xl block mb-2 opacity-50">
-                          📭
-                        </span>
-                        <p className="text-xs text-gray-400 font-semibold">
-                          All caught up!
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Hamburger Toggle */}
-          <button
-            onClick={() => {
-              setIsMenuOpen(!isMenuOpen);
-              setIsNotifDropdownOpen(false);
-            }}
-            className="p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition flex items-center justify-center font-sans font-bold"
-            aria-label="Toggle Menu"
-          >
-            {isMenuOpen ? "✕" : "☰"}
-          </button>
-        </div>
+            <button
+              onClick={() => {
+                setIsMenuOpen(!isMenuOpen);
+                setIsNotifDropdownOpen(false);
+              }}
+              className="p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition flex items-center justify-center font-sans font-bold"
+              aria-label="Toggle Menu"
+            >
+              {isMenuOpen ? "✕" : "☰"}
+            </button>
+          </div>
         </div>
       </div>
 
