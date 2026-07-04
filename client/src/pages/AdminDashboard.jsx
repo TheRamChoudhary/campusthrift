@@ -284,7 +284,7 @@ export default function AdminDashboard() {
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                       Total Registrants
                     </p>
-                    <h3 className="text-3xl font-black text-slate-800">
+                    <h3 className="text-3xl font-black text-slate-100">
                       {analytics.users?.total}
                     </h3>
                     <div className="flex gap-3 text-[10px] text-[#8b949e] font-semibold pt-2 border-t border-gray-50">
@@ -302,7 +302,7 @@ export default function AdminDashboard() {
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                       Total Product Listings
                     </p>
-                    <h3 className="text-3xl font-black text-slate-800">
+                    <h3 className="text-3xl font-black text-slate-100">
                       {analytics.listings?.total}
                     </h3>
                     <div className="flex gap-3 text-[10px] text-[#8b949e] font-semibold pt-2 border-t border-gray-50">

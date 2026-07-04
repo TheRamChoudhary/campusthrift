@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "../api/axiosInstance";
 import Navbar from "../components/layout/Navbar";
+import bgImage from "../assets/background_image.png";
 
 const statusColors = {
   pending: "bg-amber-50 text-amber-700 border border-amber-200",
@@ -88,8 +89,15 @@ export default function Feedback() {
 
 
   return (
-    <div className="min-h-screen bg-transparent flex flex-col">
-      <Navbar />
+    <div className="min-h-screen relative flex flex-col text-white selection:bg-[#1DB954]/30">
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      >
+        <div className="absolute inset-0 bg-[#121212]/15 backdrop-blur-md"></div>
+      </div>
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Navbar />
 
       <main className="flex-grow max-w-4xl mx-auto px-4 py-8 w-full">
         {/* Banner with ultra-transparent glass design */}
@@ -456,6 +464,7 @@ export default function Feedback() {
           )}
         </div>
       </main>
+      </div>
     </div>
   );
 }

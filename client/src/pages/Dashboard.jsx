@@ -64,7 +64,7 @@ function BuyerTab() {
           Found something you like? Send a request to the seller.
         </p>
         <Link
-          to="/"
+          to="/marketplace"
           className="text-[#58a6ff] text-sm font-semibold mt-4 inline-block hover:underline"
         >
           Browse Listings →
@@ -236,7 +236,7 @@ function SellerTab() {
   const approveMutation = useMutation({
     pointer: "approve",
     mutationFn: (id) => api.put(`/requests/${id}/approve`),
-    onSuccess: () => {
+    onSuccess: (resData) => {
       toast.success("Request approved!");
       queryClient.invalidateQueries({ queryKey: ["my-requests-seller"] });
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
@@ -396,7 +396,7 @@ function WishlistTab() {
           Bookmark campus items you want to keep an eye on!
         </p>
         <Link
-          to="/"
+          to="/marketplace"
           className="text-[#58a6ff] dark:text-indigo-400 text-sm font-semibold mt-4 inline-block hover:underline"
         >
           Explore Marketplace →
@@ -477,9 +477,9 @@ function ProfileTab() {
 
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
-  // Sync state if query fetches updated profile data
   useEffect(() => {
     if (profile) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
         name: profile.name || "",
         bio: profile.bio || "",
@@ -518,7 +518,7 @@ function ProfileTab() {
       setFormData((prev) => ({ ...prev, avatar: avatarUrl }));
       toast.success("Profile photo uploaded!");
     } catch (err) {
-      toast.error("Failed to upload avatar image");
+      toast.error(err.response?.data?.message || "Failed to upload avatar image");
     } finally {
       toast.dismiss(loadingToastId);
       setUploadingAvatar(false);

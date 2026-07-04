@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axiosInstance";
 import toast from "react-hot-toast";
 import useAuthStore from "../store/authStore";
-
+import bgImage from "../assets/background_image.png";
 export default function Register() {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
@@ -53,8 +53,8 @@ export default function Register() {
       });
       const { token, user } = res.data.data;
       setAuth(user, token);
-      toast.success("Email verified! Welcome to CampusThrift 🎉");
-      navigate("/");
+      toast.success("Registration successful! Welcome to CampusThrift!");
+      navigate("/marketplace");
     } catch (err) {
       toast.error(err.response?.data?.message || "Invalid OTP");
     } finally {
@@ -63,21 +63,28 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
-      <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl shadow-xl w-full max-w-md p-8">
+    <div className="min-h-screen relative flex items-center justify-center px-4 py-8">
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      >
+        <div className="absolute inset-0 bg-[#121212]/15 backdrop-blur-md"></div>
+      </div>
+
+      <div className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.5)] w-full max-w-2xl p-10 z-10 relative">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-[#58a6ff]">CampusThrift</h1>
-          <p className="text-[#8b949e] text-sm mt-1">NITT Student Platform</p>
+          <h1 className="text-2xl font-bold text-white">CampusThrift</h1>
+          <p className="text-white/60 text-sm mt-1">NITT Student Platform</p>
         </div>
 
         {step === 1 ? (
           <>
-            <h2 className="text-xl font-semibold text-[#c9d1d9] mb-6">Create Account</h2>
+            <h2 className="text-xl font-semibold text-white mb-6">Create Account</h2>
             <form onSubmit={handleRegister} className="space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-[#8b949e] mb-1">
+                <label className="block text-sm font-medium text-white/70 mb-1">
                   Full Name
                 </label>
                 <input
@@ -88,13 +95,13 @@ export default function Register() {
                   onChange={handleChange}
                   placeholder="John Doe"
                   required
-                  className="w-full border border-[#30363d] rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#58a6ff]"
+                  className="w-full bg-[#121212] border border-[#333333] rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#1DB954]/50 focus:border-[#1DB954] transition"
                 />
               </div>
 
               {/* NITT Email */}
               <div>
-                <label className="block text-sm font-medium text-[#8b949e] mb-1">
+                <label className="block text-sm font-medium text-white/70 mb-1">
                   NITT Email
                 </label>
                 <input
@@ -105,16 +112,16 @@ export default function Register() {
                   onChange={handleChange}
                   placeholder="205124076@nitt.edu"
                   required
-                  className="w-full border border-[#30363d] rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#58a6ff]"
+                  className="w-full bg-[#121212] border border-[#333333] rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#1DB954]/50 focus:border-[#1DB954] transition"
                 />
-                <p className="text-[10px] text-[#8b949e] mt-1">
-                  Only <span className="font-bold text-[#58a6ff]">@nitt.edu</span> email addresses are allowed.
+                <p className="text-[10px] text-white/50 mt-1">
+                  Only <span className="font-bold text-[#1DB954]">@nitt.edu</span> email addresses are allowed.
                 </p>
               </div>
 
               {/* Password with show/hide */}
               <div>
-                <label className="block text-sm font-medium text-[#8b949e] mb-1">
+                <label className="block text-sm font-medium text-white/70 mb-1">
                   Password
                 </label>
                 <div className="relative">
@@ -127,12 +134,12 @@ export default function Register() {
                     placeholder="Min 6 characters"
                     required
                     minLength={6}
-                    className="w-full border border-[#30363d] rounded-lg px-4 py-2.5 pr-11 text-sm focus:outline-none focus:ring-2 focus:ring-[#58a6ff]"
+                    className="w-full bg-[#121212] border border-[#333333] rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#1DB954]/50 focus:border-[#1DB954] transition"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b949e] hover:text-[#c9d1d9] transition"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
@@ -153,7 +160,7 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#238636] hover:bg-[#2ea043] text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+                className="w-full bg-[#1DB954] hover:bg-[#1ed760] hover:scale-105 active:scale-95 text-black font-bold py-3.5 rounded-full transition-all duration-200 mt-4"
               >
                 {loading ? "Sending OTP..." : "Create Account"}
               </button>
@@ -161,22 +168,22 @@ export default function Register() {
           </>
         ) : (
           <>
-            <h2 className="text-xl font-semibold text-[#c9d1d9] mb-2">Verify Email</h2>
+            <h2 className="text-xl font-semibold text-white mb-2">Verify Email</h2>
 
             {/* Webmail notice banner */}
-            <div className="bg-[#388bfd]/10 border border-[#388bfd]/30 rounded-xl px-4 py-3 mb-4 flex items-start gap-3">
+            <div className="bg-[#1DB954]/10 border border-[#1DB954]/30 rounded-xl px-4 py-3 mb-4 flex items-start gap-3">
               <span className="text-xl mt-0.5">📬</span>
               <div>
-                <p className="text-sm font-bold text-[#58a6ff]">OTP sent to your NITT Webmail</p>
-                <p className="text-xs text-[#8b949e] mt-0.5">
+                <p className="text-sm font-bold text-[#1DB954]">OTP sent to your NITT Webmail</p>
+                <p className="text-xs text-white/70 mt-0.5">
                   A 6-digit OTP has been sent to{" "}
-                  <span className="font-semibold text-[#c9d1d9]">{formData.email}</span>.
+                  <span className="font-semibold text-white">{formData.email}</span>.
                   Open your NITT webmail at{" "}
                   <a
                     href="https://webmail.nitt.edu"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#58a6ff] underline font-semibold"
+                    className="text-[#1DB954] underline font-semibold"
                   >
                     webmail.nitt.edu
                   </a>{" "}
@@ -187,7 +194,7 @@ export default function Register() {
 
             <form onSubmit={handleVerifyOTP} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[#8b949e] mb-1">
+                <label className="block text-sm font-medium text-white/70 mb-1">
                   OTP Code
                 </label>
                 <input
@@ -200,17 +207,17 @@ export default function Register() {
                   required
                   maxLength={6}
                   inputMode="numeric"
-                  className="w-full border border-[#30363d] rounded-lg px-4 py-2.5 text-sm text-center text-xl tracking-widest focus:outline-none focus:ring-2 focus:ring-[#58a6ff]"
+                  className="w-full bg-[#121212] border border-[#333333] rounded-xl px-4 py-3 text-sm text-center text-white text-xl tracking-widest focus:outline-none focus:ring-2 focus:ring-[#1DB954]/50 focus:border-[#1DB954] transition"
                 />
-                <p className="text-[10px] text-[#8b949e] mt-1 text-center">
-                  OTP expires in <span className="font-bold text-amber-500">10 minutes</span>. Check spam folder if not visible.
+                <p className="text-[10px] text-white/50 mt-1 text-center">
+                  OTP expires in <span className="font-bold text-[#1DB954]">10 minutes</span>. Check spam folder if not visible.
                 </p>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#238636] hover:bg-[#2ea043] text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50"
+                className="w-full bg-[#1DB954] hover:bg-[#1ed760] hover:scale-105 active:scale-95 text-black font-bold py-3.5 rounded-full transition-all duration-200 mt-4"
               >
                 {loading ? "Verifying..." : "Verify OTP"}
               </button>
@@ -225,9 +232,9 @@ export default function Register() {
           </>
         )}
 
-        <p className="text-center text-sm text-[#8b949e] mt-6">
+        <p className="text-center text-sm text-white/50 mt-6">
           Already have an account?{" "}
-          <Link to="/login" className="text-[#58a6ff] font-medium hover:underline">
+          <Link to="/login" className="text-white font-semibold hover:underline">
             Login
           </Link>
         </p>

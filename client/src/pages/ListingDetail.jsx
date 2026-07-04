@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import api from "../api/axiosInstance";
 import Navbar from "../components/layout/Navbar";
 import useAuthStore from "../store/authStore";
+import { LISTING_CATEGORIES } from "../utils/constants";
 
 export default function ListingDetail() {
   const { id } = useParams();
@@ -162,9 +163,11 @@ export default function ListingDetail() {
     enabled: !!user,
   });
 
-  const alreadyRequested = myRequests?.some(
+  const myRequestForListing = myRequests?.find(
     (r) => r.listing?._id === id || r.listing === id,
   );
+  const alreadyRequested = !!myRequestForListing;
+  const isRequestApproved = myRequestForListing?.status === "approved";
 
   // Strict Ownership Comparison: populated seller ID vs logged-in user id
   const isSeller = user && data?.seller?._id === user.id;
@@ -310,7 +313,7 @@ export default function ListingDetail() {
               : "This product might have been deleted by the seller or moderated by the admin team."}
           </p>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/marketplace")}
             className="mt-6 bg-[#238636] hover:bg-[#2ea043] text-white font-bold px-6 py-2.5 rounded-xl text-xs transition duration-200 shadow-xl "
           >
             Back to Marketplace
@@ -369,7 +372,7 @@ export default function ListingDetail() {
               {/* Hover Overlay */}
               {mediaItems[activeImageIndex]?.type === "image" && (
                 <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]/90 backdrop-blur-sm text-slate-800 px-4 py-2 rounded-xl text-xs font-bold shadow-xl  flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                  <span className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]/90 backdrop-blur-sm text-slate-100 px-4 py-2 rounded-xl text-xs font-bold shadow-xl  flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
                     🔍 Click for Fullscreen Preview
                   </span>
                 </div>
@@ -438,7 +441,7 @@ export default function ListingDetail() {
               {/* Title & Price */}
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-2xl font-black text-slate-800 tracking-tight leading-snug">
+                  <h1 className="text-2xl font-black text-slate-100 tracking-tight leading-snug">
                     {data.title}
                   </h1>
                   <p className="text-3xl font-black text-[#58a6ff] mt-2 tracking-tight">
@@ -512,7 +515,7 @@ export default function ListingDetail() {
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="font-extrabold text-slate-800 text-sm truncate">
+                  <p className="font-extrabold text-slate-100 text-sm truncate">
                     {isSeller ? `${data.seller?.name} (You)` : data.seller?.name}
                   </p>
                   <p className="text-xs text-gray-450 truncate mt-0.5 font-medium">
@@ -644,36 +647,35 @@ export default function ListingDetail() {
                 </div>
               ) : /* BUYER CONTROLS */
               alreadyRequested ? (
-                <div className="bg-emerald-50 border border-emerald-100 text-emerald-800 text-xs font-bold px-4 py-3.5 rounded-2xl text-center flex items-center justify-center gap-1.5">
-                  <span>✅</span>
-                  <span>
-                    You have already sent an offer/request for this item.
-                  </span>
+                <div className="space-y-4">
+                  {isRequestApproved ? (
+                    <>
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold px-4 py-3.5 rounded-2xl text-center flex items-center justify-center gap-1.5">
+                        <span>🎉</span>
+                        <span>Your buy request was approved by the seller!</span>
+                      </div>
+                      <button
+                        onClick={() => startChatMutation.mutate()}
+                        disabled={startChatMutation.isPending}
+                        className="w-full bg-[#238636] hover:bg-[#2ea043] text-white font-bold py-3.5 rounded-2xl transition duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-xs shadow-2xl "
+                      >
+                        <span>💬 Negotiate / Chat with Seller</span>
+                      </button>
+                    </>
+                  ) : (
+                    <div className="bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold px-4 py-3.5 rounded-2xl text-center flex items-center justify-center gap-1.5 animate-pulse">
+                      <span>⏳</span>
+                      <span>Your request is pending seller approval. Chat will unlock once approved.</span>
+                    </div>
+                  )}
                 </div>
               ) : data.status !== "available" ? (
                 <div className="bg-slate-100 text-slate-500 text-xs font-bold px-4 py-3.5 rounded-2xl text-center">
                   🔒 This listing is currently {data.status}.
                 </div>
               ) : (
+                /* REQUEST TO BUY */
                 <div className="space-y-4">
-                  {/* Chat Trigger */}
-                  <button
-                    onClick={() => startChatMutation.mutate()}
-                    disabled={startChatMutation.isPending}
-                    className="w-full bg-[#388bfd]/10 hover:bg-indigo-100 text-indigo-700 border border-indigo-100 font-bold py-3.5 rounded-2xl transition duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-xs shadow-2xl "
-                  >
-                    <span>💬 Negotiate / Chat with Seller</span>
-                  </button>
-
-                  <div className="relative flex py-2 items-center">
-                    <div className="flex-grow border-t border-slate-100"></div>
-                    <span className="flex-shrink mx-4 text-gray-400 text-[9px] font-black uppercase tracking-widest font-sans">
-                      or purchase directly
-                    </span>
-                    <div className="flex-grow border-t border-slate-100"></div>
-                  </div>
-
-                  {/* Request Input & Submit */}
                   <div className="space-y-3">
                     <textarea
                       value={message}
@@ -774,7 +776,7 @@ export default function ListingDetail() {
         {/* Similar Products Grid */}
         {similarListings && similarListings.length > 0 && (
           <div className="mt-16 border-t border-slate-100 pt-10">
-            <h2 className="text-xl font-black text-slate-800 mb-6 tracking-tight flex items-center gap-2">
+            <h2 className="text-xl font-black text-slate-100 mb-6 tracking-tight flex items-center gap-2">
               <span>🏷️</span> Similar Items in {data.category}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -806,7 +808,7 @@ export default function ListingDetail() {
                   {/* Content details */}
                   <div className="p-4 flex flex-col justify-between flex-grow">
                     <div>
-                      <h3 className="font-extrabold text-slate-800 text-sm truncate leading-snug group-hover:text-[#58a6ff] transition">
+                       <h3 className="font-extrabold text-slate-200 text-sm truncate leading-snug group-hover:text-[#58a6ff] transition">
                         {listing.title}
                       </h3>
                       <p className="text-xs text-gray-400 mt-1 truncate">
@@ -913,7 +915,7 @@ export default function ListingDetail() {
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 animate-scaleUp max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-black text-slate-800">
+              <h2 className="text-xl font-black text-slate-100">
                 Edit Product Details
               </h2>
               <button
@@ -1009,13 +1011,12 @@ export default function ListingDetail() {
                   }
                   className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#58a6ff]/20 focus:border-[#58a6ff] cursor-pointer"
                 >
-                  <option value="Books & Notes">Books & Notes</option>
-                  <option value="Electronics">Electronics</option>
-                  <option value="Furniture">Furniture</option>
-                  <option value="Clothing">Clothing</option>
-                  <option value="Sports">Sports</option>
-                  <option value="Stationery">Stationery</option>
-                  <option value="Other">Other</option>
+                  <option value="">Select a category</option>
+                  {LISTING_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -1049,7 +1050,7 @@ export default function ListingDetail() {
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-2">
                 <span className="text-xl">⚠️</span>
-                <h2 className="text-lg font-black text-slate-800">
+                <h2 className="text-lg font-black text-slate-100">
                   Report Listing
                 </h2>
               </div>
