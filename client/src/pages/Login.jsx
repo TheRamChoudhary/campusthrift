@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import api from "../api/axiosInstance";
 import useAuthStore from "../store/authStore";
 import toast from "react-hot-toast";
+import bgImage from "../assets/background_image.png";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -26,8 +27,8 @@ export default function Login() {
       // Clear ALL cached query data so previous user's role/profile doesn't bleed into new session
       queryClient.clear();
       setAuth(user, token);
-      toast.success(`Welcome back, ${user.name}!`);
-      navigate("/");
+      toast.success("Login successful!");
+      navigate("/marketplace");
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
     } finally {
@@ -36,8 +37,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
-      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-[0_8px_40px_rgba(255,255,255,0.1)] w-full max-w-md p-8">
+    <div className="min-h-screen relative flex items-center justify-center px-4">
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      >
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-2xl"></div>
+      </div>
+
+      <div className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.5)] w-full max-w-md p-10 z-10 relative">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -63,7 +71,7 @@ export default function Login() {
               onChange={handleChange}
               placeholder="205124076@nitt.edu"
               required
-              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/40 transition"
+              className="w-full bg-[#121212] border border-[#333333] rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#1DB954]/50 focus:border-[#1DB954] transition"
             />
           </div>
 
@@ -89,7 +97,7 @@ export default function Login() {
                 onChange={handleChange}
                 placeholder="Enter your password"
                 required
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2.5 pr-11 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/40 transition"
+                className="w-full bg-[#121212] border border-[#333333] rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#1DB954]/50 focus:border-[#1DB954] transition"
               />
               <button
                 type="button"
@@ -115,9 +123,9 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-white/20 hover:bg-white/30 border border-white/30 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50 backdrop-blur-sm"
+            className="w-full bg-[#1DB954] hover:bg-[#1ed760] hover:scale-105 active:scale-95 text-black font-bold py-3.5 rounded-full transition-all duration-200 mt-4"
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
 

@@ -74,7 +74,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
-      <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl shadow-xl  w-full max-w-md p-8">
+      <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl shadow-xl  w-full max-w-md p-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-[#58a6ff]">CampusThrift</h1>

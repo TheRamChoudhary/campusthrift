@@ -197,7 +197,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Tab Selection Row */}
-        <div className="flex bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl p-1.5 shadow-2xl mb-8 flex-wrap gap-1.5 w-full">
+        <div className="flex bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl p-1.5 shadow-2xl mb-8 flex-wrap gap-1.5 w-full">
           <button
             onClick={() => setActiveTab("analytics")}
             className={`flex-1 sm:flex-initial px-5 py-3 text-xs sm:text-sm font-bold rounded-xl transition text-center ${
@@ -280,11 +280,11 @@ export default function AdminDashboard() {
                 {/* Metric Widgets Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Widget: Users */}
-                  <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] p-5 rounded-2xl border border-[#30363d] shadow-2xl  space-y-2">
+                  <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 p-5 rounded-2xl border border-[#30363d] shadow-2xl  space-y-2">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                       Total Registrants
                     </p>
-                    <h3 className="text-3xl font-black text-slate-800">
+                    <h3 className="text-3xl font-black text-slate-100">
                       {analytics.users?.total}
                     </h3>
                     <div className="flex gap-3 text-[10px] text-[#8b949e] font-semibold pt-2 border-t border-gray-50">
@@ -298,11 +298,11 @@ export default function AdminDashboard() {
                   </div>
 
                   {/* Widget: Listings */}
-                  <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] p-5 rounded-2xl border border-[#30363d] shadow-2xl  space-y-2">
+                  <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 p-5 rounded-2xl border border-[#30363d] shadow-2xl  space-y-2">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                       Total Product Listings
                     </p>
-                    <h3 className="text-3xl font-black text-slate-800">
+                    <h3 className="text-3xl font-black text-slate-100">
                       {analytics.listings?.total}
                     </h3>
                     <div className="flex gap-3 text-[10px] text-[#8b949e] font-semibold pt-2 border-t border-gray-50">
@@ -316,7 +316,7 @@ export default function AdminDashboard() {
                   </div>
 
                   {/* Widget: Revenue */}
-                  <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] p-5 rounded-2xl border border-[#30363d] shadow-2xl  space-y-2">
+                  <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 p-5 rounded-2xl border border-[#30363d] shadow-2xl  space-y-2">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                       Gross Transaction Volume
                     </p>
@@ -330,7 +330,7 @@ export default function AdminDashboard() {
 
                   {/* Widget: Access Type */}
                   <div className="bg-gradient-to-tr from-slate-800 to-indigo-900 p-5 rounded-2xl text-white shadow-xl  relative overflow-hidden flex flex-col justify-between">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]/5 rounded-full -mr-6 -mt-6 blur-lg"></div>
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20/5 rounded-full -mr-6 -mt-6 blur-lg"></div>
                     <p className="text-[9px] font-bold text-indigo-200 uppercase tracking-wider">
                       Moderation Level
                     </p>
@@ -350,7 +350,7 @@ export default function AdminDashboard() {
                 {/* Simulated Custom Graphs & Breakdown Panels */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Category distributions */}
-                  <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] p-6 shadow-2xl ">
+                  <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] p-6 shadow-2xl ">
                     <h3 className="text-sm font-bold text-[#c9d1d9] mb-4 flex items-center gap-1.5">
                       <span>🏷️</span> Category Distribution Breakdown
                     </h3>
@@ -381,7 +381,7 @@ export default function AdminDashboard() {
                   </div>
 
                   {/* Daily transactions logs */}
-                  <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] p-6 shadow-2xl ">
+                  <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] p-6 shadow-2xl ">
                     <h3 className="text-sm font-bold text-[#c9d1d9] mb-4 flex items-center gap-1.5">
                       <span>📈</span> Sales Volume Activity Feed (Last 7 Days)
                     </h3>
@@ -420,7 +420,7 @@ export default function AdminDashboard() {
 
         {/* -------------------- USERS TAB -------------------- */}
         {activeTab === "users" && (
-          <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl  overflow-hidden">
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl  overflow-hidden">
             <div className="p-5 border-b border-slate-50 bg-slate-50/50">
               <h3 className="text-sm font-extrabold text-[#c9d1d9]">
                 Student Directory Register
@@ -543,7 +543,7 @@ export default function AdminDashboard() {
 
         {/* -------------------- LISTINGS MODERATION TAB -------------------- */}
         {activeTab === "listings" && (
-          <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl  overflow-hidden">
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl  overflow-hidden">
             <div className="p-5 border-b border-slate-50 bg-slate-50/50">
               <h3 className="text-sm font-extrabold text-[#c9d1d9]">
                 Product Listings Registry
@@ -664,7 +664,7 @@ export default function AdminDashboard() {
 
         {/* -------------------- AUDIT LOGS TAB (ADMINS ONLY) -------------------- */}
         {activeTab === "logs" && isAdmin && (
-          <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl  overflow-hidden">
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl  overflow-hidden">
             <div className="p-5 border-b border-slate-50 bg-slate-50/50">
               <h3 className="text-sm font-extrabold text-[#c9d1d9]">
                 System Structural Audit Logs
@@ -744,7 +744,7 @@ export default function AdminDashboard() {
 
         {/* -------------------- PROVISION ACCOUNTS TAB (ADMINS ONLY) -------------------- */}
         {activeTab === "provision" && isAdmin && (
-          <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl  overflow-hidden max-w-lg mx-auto">
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl  overflow-hidden max-w-lg mx-auto">
             <div className="p-5 border-b border-slate-50 bg-slate-50/50">
               <h3 className="text-sm font-extrabold text-[#c9d1d9]">
                 Provision Special Verified Account
@@ -809,7 +809,7 @@ export default function AdminDashboard() {
                   name="role"
                   value={provisionForm.role}
                   onChange={handleProvisionChange}
-                  className="w-full border border-[#30363d] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#58a6ff] bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]"
+                  className="w-full border border-[#30363d] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#58a6ff] bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20"
                 >
                   <option value="club">
                     Campus Club (e.g. @nitt.edu clubs)
@@ -839,7 +839,7 @@ export default function AdminDashboard() {
         {/* -------------------- COMPLAINTS TAB -------------------- */}
         {activeTab === "complaints" && (
           <div className="space-y-6 animate-fadeIn">
-            <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl p-5 shadow-2xl">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl p-5 shadow-2xl">
               <h3 className="text-sm font-extrabold text-[#c9d1d9]">
                 User Complaints & Support Center
               </h3>
@@ -853,7 +853,7 @@ export default function AdminDashboard() {
                 Loading support tickets...
               </div>
             ) : complaints.length === 0 ? (
-              <div className="text-center py-12 text-gray-400 text-xs font-medium bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl">
+              <div className="text-center py-12 text-gray-400 text-xs font-medium bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl">
                 No complaints or support tickets found.
               </div>
             ) : (
@@ -864,7 +864,7 @@ export default function AdminDashboard() {
                   return (
                     <div
                       key={item._id}
-                      className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl p-5 hover:shadow-xl transition"
+                      className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl p-5 hover:shadow-xl transition"
                     >
                       {/* Ticket header */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 border-b border-[#30363d] pb-3">

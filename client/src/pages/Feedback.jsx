@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "../api/axiosInstance";
 import Navbar from "../components/layout/Navbar";
+import bgImage from "../assets/background_image.png";
 
 const statusColors = {
   pending: "bg-amber-50 text-amber-700 border border-amber-200",
@@ -88,12 +89,19 @@ export default function Feedback() {
 
 
   return (
-    <div className="min-h-screen bg-transparent flex flex-col">
-      <Navbar />
+    <div className="min-h-screen relative flex flex-col text-white selection:bg-[#1DB954]/30">
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      >
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-2xl"></div>
+      </div>
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Navbar />
 
       <main className="flex-grow max-w-4xl mx-auto px-4 py-8 w-full">
         {/* Banner with ultra-transparent glass design */}
-        <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-3xl p-6 sm:p-8 shadow-2xl  mb-8 relative overflow-hidden">
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl  mb-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.02),transparent)]"></div>
           <div className="z-10 relative">
             <span className="text-3xl sm:text-4xl">📣</span>
@@ -108,7 +116,7 @@ export default function Feedback() {
         </div>
 
         {/* Tab Selection */}
-        <div className="flex gap-2 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl p-1.5 shadow-2xl  border border-[#30363d] mb-8">
+        <div className="flex gap-2 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl p-1.5 shadow-2xl  border border-[#30363d] mb-8">
           <button
             onClick={() => setActiveTab("submit-feedback")}
             className={`flex-1 py-3 text-xs sm:text-sm font-bold rounded-xl transition ${
@@ -135,7 +143,7 @@ export default function Feedback() {
         <div className="transition-all duration-300">
           {/* Submit Feedback Form */}
           {activeTab === "submit-feedback" && (
-            <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl  p-6 sm:p-8">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl  p-6 sm:p-8">
               <h2 className="text-xl font-bold text-[#c9d1d9] mb-2 flex items-center gap-2">
                 <span>📋</span> Submit Support Request
               </h2>
@@ -382,7 +390,7 @@ export default function Feedback() {
                   Loading support logs...
                 </div>
               ) : !myFeedback?.length ? (
-                <div className="text-center py-12 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl ">
+                <div className="text-center py-12 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl ">
                   <p className="text-4xl mb-3">📭</p>
                   <h3 className="font-bold text-[#8b949e] text-sm">
                     No support tickets found
@@ -397,7 +405,7 @@ export default function Feedback() {
                   {myFeedback.map((item) => (
                     <div
                       key={item._id}
-                      className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl  p-5 hover:shadow-xl  transition duration-200"
+                      className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl  p-5 hover:shadow-xl  transition duration-200"
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 border-b border-gray-50 pb-3">
                         <div className="flex flex-wrap items-center gap-2">
@@ -456,6 +464,7 @@ export default function Feedback() {
           )}
         </div>
       </main>
+      </div>
     </div>
   );
 }

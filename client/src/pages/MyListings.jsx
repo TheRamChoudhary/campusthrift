@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axiosInstance";
 import Navbar from "../components/layout/Navbar";
+import bgImage from "../assets/background_image.png";
 
 const statusColors = {
   available: "bg-green-100 text-green-700",
@@ -52,8 +53,15 @@ export default function MyListings() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent">
-      <Navbar />
+    <div className="min-h-screen relative text-white selection:bg-[#1DB954]/30">
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      >
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-2xl"></div>
+      </div>
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
@@ -91,7 +99,7 @@ export default function MyListings() {
             {listings.map((listing) => (
               <div
                 key={listing._id}
-                className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-xl border border-[#30363d] shadow-2xl  overflow-hidden flex"
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-xl border border-[#30363d] shadow-2xl  overflow-hidden flex"
               >
                 {/* Thumbnail */}
                 <div className="w-24 h-24 sm:w-32 sm:h-auto bg-[#21262d]/50 backdrop-blur-sm border border-[#30363d] flex-shrink-0 flex items-center justify-center">
@@ -162,6 +170,7 @@ export default function MyListings() {
             ))}
           </div>
         )}
+      </div>
       </div>
     </div>
   );

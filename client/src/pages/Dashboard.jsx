@@ -57,14 +57,14 @@ function BuyerTab() {
     );
   if (!requests?.length)
     return (
-      <div className="text-center py-12 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl ">
+      <div className="text-center py-12 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl ">
         <p className="text-5xl mb-4">🛒</p>
         <p className="text-[#8b949e] font-medium">No buy requests sent yet</p>
         <p className="text-gray-400 text-xs mt-1">
           Found something you like? Send a request to the seller.
         </p>
         <Link
-          to="/"
+          to="/marketplace"
           className="text-[#58a6ff] text-sm font-semibold mt-4 inline-block hover:underline"
         >
           Browse Listings →
@@ -77,7 +77,7 @@ function BuyerTab() {
       {requests.map((req) => (
         <div
           key={req._id}
-          className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl  p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition hover:shadow-xl "
+          className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl  p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition hover:shadow-xl "
         >
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
@@ -236,7 +236,7 @@ function SellerTab() {
   const approveMutation = useMutation({
     pointer: "approve",
     mutationFn: (id) => api.put(`/requests/${id}/approve`),
-    onSuccess: () => {
+    onSuccess: (resData) => {
       toast.success("Request approved!");
       queryClient.invalidateQueries({ queryKey: ["my-requests-seller"] });
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
@@ -270,7 +270,7 @@ function SellerTab() {
     );
   if (!requests?.length)
     return (
-      <div className="text-center py-12 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl ">
+      <div className="text-center py-12 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl ">
         <p className="text-5xl mb-4">📭</p>
         <p className="text-[#8b949e] font-medium">No incoming requests yet</p>
         <p className="text-gray-400 text-xs mt-1">
@@ -290,7 +290,7 @@ function SellerTab() {
       {requests.map((req) => (
         <div
           key={req._id}
-          className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl border border-[#30363d] shadow-2xl  p-5 transition hover:shadow-xl "
+          className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl  p-5 transition hover:shadow-xl "
         >
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -387,7 +387,7 @@ function WishlistTab() {
     );
   if (!wishlist?.length)
     return (
-      <div className="text-center py-12 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl shadow-2xl ">
+      <div className="text-center py-12 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl shadow-2xl ">
         <p className="text-5xl mb-4">❤️</p>
         <p className="text-[#8b949e] dark:text-slate-300 font-medium">
           Your Wishlist is empty
@@ -396,7 +396,7 @@ function WishlistTab() {
           Bookmark campus items you want to keep an eye on!
         </p>
         <Link
-          to="/"
+          to="/marketplace"
           className="text-[#58a6ff] dark:text-indigo-400 text-sm font-semibold mt-4 inline-block hover:underline"
         >
           Explore Marketplace →
@@ -409,7 +409,7 @@ function WishlistTab() {
       {wishlist.map((listing) => (
         <div
           key={listing._id}
-          className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl shadow-2xl  overflow-hidden flex flex-col justify-between transition hover:shadow-xl hover:scale-[1.01] hover:border-slate-400/30"
+          className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl shadow-2xl  overflow-hidden flex flex-col justify-between transition hover:shadow-xl hover:scale-[1.01] hover:border-slate-400/30"
         >
           <Link to={`/listings/${listing._id}`} className="p-4 flex gap-3 cursor-pointer select-none">
             <div className="w-20 h-20 bg-[#21262d]/50 backdrop-blur-sm border border-[#30363d] dark:bg-slate-950 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -477,9 +477,9 @@ function ProfileTab() {
 
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
-  // Sync state if query fetches updated profile data
   useEffect(() => {
     if (profile) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
         name: profile.name || "",
         bio: profile.bio || "",
@@ -518,7 +518,7 @@ function ProfileTab() {
       setFormData((prev) => ({ ...prev, avatar: avatarUrl }));
       toast.success("Profile photo uploaded!");
     } catch (err) {
-      toast.error("Failed to upload avatar image");
+      toast.error(err.response?.data?.message || "Failed to upload avatar image");
     } finally {
       toast.dismiss(loadingToastId);
       setUploadingAvatar(false);
@@ -551,7 +551,7 @@ function ProfileTab() {
   };
 
   return (
-    <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-3xl p-6 shadow-2xl space-y-6 text-[#c9d1d9]">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-3xl p-6 shadow-2xl space-y-6 text-[#c9d1d9]">
       <div className="flex items-center gap-4 border-b border-[#30363d] pb-4">
         <span className="text-2xl">👤</span>
         <div>
@@ -747,7 +747,7 @@ export default function Dashboard() {
         </h1>
 
         {/* Tabs */}
-        <div className="flex gap-2 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl p-1.5 shadow-2xl  mb-6">
+        <div className="flex gap-2 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl p-1.5 shadow-2xl  mb-6">
           {tabs.map((tab) => (
             <button
               key={tab.id}

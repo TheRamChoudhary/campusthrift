@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import api from "../api/axiosInstance";
 import Navbar from "../components/layout/Navbar";
 import useAuthStore from "../store/authStore";
+import bgImage from "../assets/background_image.png";
 
 export default function Chat() {
   const queryClient = useQueryClient();
@@ -325,13 +326,20 @@ export default function Chat() {
   };
 
   return (
-    <div className="h-screen bg-transparent flex flex-col overflow-hidden">
-      <Navbar />
+    <div className="h-screen relative flex flex-col overflow-hidden text-white selection:bg-[#1DB954]/30">
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      >
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-2xl"></div>
+      </div>
+      <div className="relative z-10 flex flex-col h-screen">
+        <Navbar />
 
-      <div className="flex-1 flex overflow-hidden max-w-7xl mx-auto w-full border-t border-slate-100 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] shadow-2xl  md:rounded-b-3xl">
+      <div className="flex-1 flex overflow-hidden max-w-7xl mx-auto w-full border-t border-slate-100 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 shadow-2xl  md:rounded-b-3xl">
         {/* LEFT PANEL: Conversations Sidebar */}
         <div
-          className={`w-full md:w-80 lg:w-[380px] border-r border-slate-100 flex flex-col flex-shrink-0 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] transition-all duration-300 ${
+          className={`w-full md:w-80 lg:w-[380px] border-r border-slate-100 flex flex-col flex-shrink-0 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300 ${
             activeConversationId ? "hidden md:flex" : "flex"
           }`}
         >
@@ -339,7 +347,7 @@ export default function Chat() {
           <div className="p-5 border-b border-slate-100 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+                <h2 className="text-xl font-black text-slate-100 tracking-tight flex items-center gap-2">
                   <span>💬</span> Marketplace Chats
                 </h2>
                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
@@ -506,7 +514,7 @@ export default function Chat() {
           {activeConversationId && recipient ? (
             <>
               {/* HEADER VIEWPORT */}
-              <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] border-b border-slate-100 px-6 py-4 flex items-center justify-between shadow-2xl  z-10 flex-shrink-0">
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 border-b border-slate-100 px-6 py-4 flex items-center justify-between shadow-2xl  z-10 flex-shrink-0">
                 <div className="flex items-center gap-3.5 min-w-0">
                   {/* Mobile Back button */}
                   <button
@@ -547,7 +555,7 @@ export default function Chat() {
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <h3 className="font-extrabold text-slate-800 text-xs sm:text-sm truncate leading-none">
+                      <h3 className="font-extrabold text-slate-100 text-xs sm:text-sm truncate leading-none">
                         {recipient.name}
                       </h3>
                       {recipient.role && recipient.role !== "student" && (
@@ -589,7 +597,7 @@ export default function Chat() {
                       </div>
                     )}
                     <div className="min-w-0">
-                      <p className="text-[10px] font-black text-slate-800 truncate leading-snug">
+                      <p className="text-[10px] font-black text-slate-200 truncate leading-snug">
                         {activeConversation.listing.title}
                       </p>
                       <p className="text-[10px] font-extrabold text-[#58a6ff] mt-0.5 font-mono">
@@ -607,7 +615,7 @@ export default function Chat() {
               <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-transparent">
                 {/* Floating Product Preview Banner inside active viewport */}
                 {activeConversation.listing && (
-                  <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]/80 backdrop-blur-sm border border-slate-100 rounded-3xl p-4.5 flex gap-4 shadow-2xl  items-center max-w-xl mx-auto mb-6 transform hover:scale-[1.01] transition duration-200">
+                  <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20/80 backdrop-blur-sm border border-slate-100 rounded-3xl p-4.5 flex gap-4 shadow-2xl  items-center max-w-xl mx-auto mb-6 transform hover:scale-[1.01] transition duration-200">
                     <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-900 flex-shrink-0 shadow-inner">
                       {activeConversation.listing.images?.[0] ? (
                         <img
@@ -625,7 +633,7 @@ export default function Chat() {
                       <div className="flex items-center justify-between gap-2">
                         <Link
                           to={`/listings/${activeConversation.listing._id}`}
-                          className="text-xs font-black text-slate-800 truncate hover:text-[#58a6ff] transition"
+                          className="text-xs font-black text-slate-200 truncate hover:text-[#58a6ff] transition"
                         >
                           {activeConversation.listing.title}
                         </Link>
@@ -762,7 +770,7 @@ export default function Chat() {
                     <div className="w-8 h-8 rounded-full bg-slate-200 border flex items-center justify-center text-[10px] text-[#8b949e] font-bold uppercase">
                       {recipient.name?.[0]}
                     </div>
-                    <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] border border-slate-100 rounded-2xl rounded-tl-none px-4 py-3 shadow-2xl  flex items-center gap-1.5">
+                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 border border-slate-100 rounded-2xl rounded-tl-none px-4 py-3 shadow-2xl  flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
                       <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
                       <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
@@ -774,7 +782,7 @@ export default function Chat() {
               </div>
 
               {/* INPUT PANEL TRAY */}
-              <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] border-t border-slate-100 p-4.5 z-10 flex-shrink-0 space-y-3">
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 border-t border-slate-100 p-4.5 z-10 flex-shrink-0 space-y-3">
                 {/* Micro Emoji interactive popover */}
                 {showEmojiPicker && (
                   <div className="flex gap-2 p-2 bg-slate-50 border border-slate-100 rounded-xl animate-scaleUp shadow-inner justify-around max-w-sm">
@@ -832,7 +840,7 @@ export default function Chat() {
                       placeholder="Type a message to negotiate..."
                       value={inputText}
                       onChange={handleInputChange}
-                      className="flex-1 bg-slate-50 border border-slate-100 rounded-xl px-4.5 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#58a6ff]/20 focus:border-[#58a6ff] focus:bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] text-slate-800 transition font-medium"
+                      className="flex-1 bg-slate-50 border border-slate-100 rounded-xl px-4.5 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-[#58a6ff]/20 focus:border-[#58a6ff] focus:bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 text-slate-200 transition font-medium"
                     />
                     <button
                       type="submit"
@@ -849,7 +857,7 @@ export default function Chat() {
             /* EMPTY VIEW */
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center max-w-lg mx-auto space-y-4">
               <span className="text-6xl animate-pulse">💬</span>
-              <h3 className="text-lg font-black text-slate-800">
+              <h3 className="text-lg font-black text-slate-100">
                 Direct Student Messaging Hub
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed max-w-sm">
@@ -858,7 +866,7 @@ export default function Chat() {
                 directories.
               </p>
 
-              <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] border border-slate-100 rounded-3xl p-5 text-left shadow-2xl  space-y-3 w-full">
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 border border-slate-100 rounded-3xl p-5 text-left shadow-2xl  space-y-3 w-full">
                 <h4 className="text-[10px] font-black text-[#58a6ff] uppercase tracking-widest">
                   Marketplace Protocols
                 </h4>
@@ -887,7 +895,7 @@ export default function Chat() {
         <div className="fixed inset-0 z-50 bg-slate-950/90 flex items-center justify-center p-4 animate-fadeIn">
           <button
             onClick={() => setSelectedChatImage(null)}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]/10 hover:bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]/20 transition flex items-center justify-center text-white text-xl font-bold font-sans"
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20/10 hover:bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20/20 transition flex items-center justify-center text-white text-xl font-bold font-sans"
             title="Close Lightbox"
           >
             ×
@@ -901,6 +909,7 @@ export default function Chat() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

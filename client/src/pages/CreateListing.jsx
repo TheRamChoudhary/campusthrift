@@ -96,10 +96,12 @@ export default function CreateListing() {
       [newFiles[index], newFiles[targetIndex]] = [
         newFiles[targetIndex],
         newFiles[index],
-      ][
-        // Swap previews
-        (newPreviews[index], newPreviews[targetIndex])
-      ] = [newPreviews[targetIndex], newPreviews[index]];
+      ];
+      // Swap previews
+      [newPreviews[index], newPreviews[targetIndex]] = [
+        newPreviews[targetIndex],
+        newPreviews[index],
+      ];
 
       setImageFiles(newFiles);
       setImagePreviews(newPreviews);
@@ -164,7 +166,7 @@ export default function CreateListing() {
 
       await api.post("/listings", data);
       toast.success("Listing created successfully!");
-      navigate("/");
+      navigate("/my-listings");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to create listing");
     } finally {
@@ -177,7 +179,7 @@ export default function CreateListing() {
       <Navbar />
 
       <div className="max-w-3xl mx-auto px-4 py-12">
-        <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-3xl shadow-xl border border-slate-100/80 p-8 md:p-10 transition-all duration-300">
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-3xl shadow-xl border border-slate-100/80 p-8 md:p-10 transition-all duration-300">
           {/* Header */}
           <div className="mb-8">
             <span className="text-xs font-bold uppercase tracking-wider text-[#58a6ff] bg-[#388bfd]/10 px-3.5 py-1.5 rounded-full">
@@ -256,36 +258,19 @@ export default function CreateListing() {
                 <label className="block text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-2">
                   Condition
                 </label>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { value: "new", label: "Brand New", emoji: "🆕", desc: "Unused / unopened package" },
-                    { value: "like-new", label: "Like New", emoji: "✨", desc: "Rarely used, pristine state" },
-                    { value: "good", label: "Good", emoji: "👍", desc: "Fully functional, minor wear" },
-                    { value: "fair", label: "Fair", emoji: "🩹", desc: "Visible wear, works perfectly" }
-                  ].map((opt) => {
-                    const isSelected = formData.condition === opt.value;
-                    return (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, condition: opt.value })}
-                        className={`flex flex-col items-start p-3 rounded-2xl border text-left transition-all duration-200 select-none ${
-                          isSelected
-                            ? "bg-[#388bfd]/10 border-[#58a6ff] shadow-lg scale-[1.01]"
-                            : "bg-slate-50/50 hover:bg-slate-50 border-[#30363d] hover:border-slate-400 text-slate-800"
-                        }`}
-                      >
-                        <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs">
-                          <span>{opt.emoji}</span>
-                          <span>{opt.label}</span>
-                        </div>
-                        <p className="text-[10px] text-slate-500 mt-1 font-medium leading-relaxed">
-                          {opt.desc}
-                        </p>
-                      </button>
-                    );
-                  })}
-                </div>
+                <select
+                  name="condition"
+                  value={formData.condition}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-[#30363d] rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#58a6ff]/20 focus:border-[#58a6ff] transition-all duration-200 bg-slate-50/50 hover:bg-slate-50 cursor-pointer"
+                >
+                  <option value="">Select a condition</option>
+                  <option value="new">🆕 Brand New (Unused / unopened package)</option>
+                  <option value="like-new">✨ Like New (Rarely used, pristine state)</option>
+                  <option value="good">👍 Good (Fully functional, minor wear)</option>
+                  <option value="fair">🩹 Fair (Visible wear, works perfectly)</option>
+                </select>
               </div>
             </div>
 
@@ -370,7 +355,7 @@ export default function CreateListing() {
                     {imagePreviews.map((src, i) => (
                       <div
                         key={i}
-                        className={`flex items-center justify-between p-3 rounded-2xl bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] border transition-all duration-200 ${
+                        className={`flex items-center justify-between p-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 border transition-all duration-200 ${
                           i === 0
                             ? "border-indigo-500 shadow-xl  ring-2 ring-[#58a6ff]/10"
                             : "border-slate-200 hover:border-indigo-200"
@@ -462,7 +447,7 @@ export default function CreateListing() {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col sm:flex-row items-center justify-between p-3.5 rounded-2xl bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] gap-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between p-3.5 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 gap-4">
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div className="w-20 h-14 rounded-xl overflow-hidden border border-slate-100/80 bg-slate-900 flex-shrink-0">
                       <video

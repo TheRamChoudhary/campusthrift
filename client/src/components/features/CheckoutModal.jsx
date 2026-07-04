@@ -79,7 +79,7 @@ export default function CheckoutModal({ isOpen, onClose, request, onSuccess }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
-      <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl border border-[#30363d] flex flex-col max-h-[90vh] transition-all transform duration-300 scale-100">
+      <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl border border-[#30363d] flex flex-col max-h-[90vh] transition-all transform duration-300 scale-100">
         {/* Header */}
         <div className="px-6 py-4 border-b border-[#30363d] flex items-center justify-between bg-gradient-to-r from-indigo-50/50 to-purple-50/20">
           <div>
@@ -106,7 +106,7 @@ export default function CheckoutModal({ isOpen, onClose, request, onSuccess }) {
             <form onSubmit={handleSubmitPayment} className="space-y-5">
               {/* Product summary card */}
               <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-xl p-5 text-white shadow-xl  relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]/10 rounded-full -mr-8 -mt-8 blur-2xl"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20/10 rounded-full -mr-8 -mt-8 blur-2xl"></div>
                 <p className="text-indigo-100 text-xs font-semibold tracking-wider uppercase">
                   Purchase Summary
                 </p>
@@ -207,7 +207,7 @@ export default function CheckoutModal({ isOpen, onClose, request, onSuccess }) {
                           value={cardName}
                           onChange={(e) => setCardName(e.target.value)}
                           required
-                          className="w-full border border-[#30363d] rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#58a6ff] bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]"
+                          className="w-full border border-[#30363d] rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#58a6ff] bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20"
                         />
                       </div>
                       <div className="col-span-2">
@@ -217,7 +217,7 @@ export default function CheckoutModal({ isOpen, onClose, request, onSuccess }) {
                           value={cardNumber}
                           onChange={handleCardNumberChange}
                           required
-                          className="w-full border border-[#30363d] rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#58a6ff] bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d]"
+                          className="w-full border border-[#30363d] rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#58a6ff] bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20"
                         />
                       </div>
                       <div>
@@ -227,7 +227,7 @@ export default function CheckoutModal({ isOpen, onClose, request, onSuccess }) {
                           value={cardExpiry}
                           onChange={handleExpiryChange}
                           required
-                          className="w-full border border-[#30363d] rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#58a6ff] bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] text-center"
+                          className="w-full border border-[#30363d] rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#58a6ff] bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 text-center"
                         />
                       </div>
                       <div>
@@ -241,7 +241,7 @@ export default function CheckoutModal({ isOpen, onClose, request, onSuccess }) {
                             )
                           }
                           required
-                          className="w-full border border-[#30363d] rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#58a6ff] bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] text-center"
+                          className="w-full border border-[#30363d] rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#58a6ff] bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 text-center"
                         />
                       </div>
                     </div>
@@ -251,7 +251,7 @@ export default function CheckoutModal({ isOpen, onClose, request, onSuccess }) {
                 {/* UPI QR */}
                 {paymentMethod === "upi" && (
                   <div className="w-full flex items-center gap-4 py-2">
-                    <div className="bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] p-2 rounded-xl border border-[#30363d] shadow-2xl  flex-shrink-0">
+                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 p-2 rounded-xl border border-[#30363d] shadow-2xl  flex-shrink-0">
                       {/* Simulating QR code */}
                       <div className="w-24 h-24 bg-[#21262d]/50 backdrop-blur-sm border border-[#30363d] flex flex-col items-center justify-center border-4 border-slate-900 rounded relative">
                         <div className="grid grid-cols-4 gap-1 w-20 h-20 opacity-90">
@@ -262,7 +262,7 @@ export default function CheckoutModal({ isOpen, onClose, request, onSuccess }) {
                             ></div>
                           ))}
                         </div>
-                        <span className="absolute bg-[#161b22]/5 backdrop-blur-lg border border-[#30363d] px-1 py-0.5 rounded text-[8px] font-bold text-[#58a6ff] border shadow-2xl ">
+                        <span className="absolute bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 px-1 py-0.5 rounded text-[8px] font-bold text-[#58a6ff] border shadow-2xl ">
                           UPI MOCK
                         </span>
                       </div>

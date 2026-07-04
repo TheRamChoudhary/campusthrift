@@ -25,6 +25,9 @@ const listingSchema = new mongoose.Schema(
       required: [true, "Category is required"],
       enum: [
         "Books & Notes",
+        "Lab Equipment & Coats",
+        "Cycles & Bicycles",
+        "Hostel Essentials",
         "Electronics",
         "Furniture",
         "Clothing",
