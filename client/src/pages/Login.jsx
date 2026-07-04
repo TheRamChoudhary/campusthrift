@@ -69,7 +69,7 @@ export default function Login() {
               id="login-email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="205124076@nitt.edu"
+              placeholder="205124xxx@nitt.edu"
               required
               className="w-full bg-[#121212] border border-[#333333] rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#1DB954]/50 focus:border-[#1DB954] transition"
             />

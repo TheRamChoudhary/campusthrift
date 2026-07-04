@@ -1,29 +1,24 @@
 import { Link } from "react-router-dom";
 
-const conditionColors = {
-  new: "bg-green-100 text-green-700",
-  "like-new": "bg-blue-100 text-blue-700",
-  good: "bg-yellow-100 text-yellow-700",
-  fair: "bg-orange-100 text-orange-700",
+const conditionConfig = {
+  new: { label: "Brand New", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
+  "like-new": { label: "Like New", color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+  good: { label: "Good", color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
+  fair: { label: "Fair", color: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
 };
 
 export default function ListingCard({ listing }) {
+  const condition = conditionConfig[listing.condition] || {
+    label: listing.condition,
+    color: "bg-white/10 text-white/60 border-white/10",
+  };
+
   return (
-    <Link to={`/listings/${listing._id}`} className="group block">
-      <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 hover:border-[#22c55e]/50 transition-all duration-300 overflow-hidden relative flex flex-col h-full">
-        
-        {/* Wishlist Button (absolute top right) */}
-        <button 
-          onClick={(e) => { e.preventDefault(); /* Wishlist functionality to be added */ }}
-          className="absolute top-3 right-3 p-2 rounded-full bg-black/40 backdrop-blur-md text-white hover:bg-rose-500 hover:text-white transition-colors z-10 opacity-0 group-hover:opacity-100"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-        </button>
+    <Link to={`/listings/${listing._id}`} className="group block h-full">
+      <div className="relative bg-white/5 border border-white/10 group-hover:border-[#1DB954]/40 rounded-2xl overflow-hidden transition-all duration-300 group-hover:shadow-[0_0_30px_rgba(29,185,84,0.10)] group-hover:-translate-y-1 flex flex-col h-full">
 
         {/* Image */}
-        <div className="h-56 bg-[#21262d]/30 border-b border-[#30363d] flex items-center justify-center relative overflow-hidden">
+        <div className="relative h-52 overflow-hidden bg-[#1a1a1a] flex-shrink-0">
           {listing.images?.length > 0 ? (
             <img
               src={listing.images[0]}
@@ -31,40 +26,53 @@ export default function ListingCard({ listing }) {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <span className="text-4xl opacity-50 group-hover:scale-110 transition-transform duration-500">📦</span>
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="text-5xl opacity-20">📦</span>
+            </div>
           )}
+
+          {/* Condition badge - overlay on image */}
+          <span className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border backdrop-blur-md ${condition.color}`}>
+            {condition.label}
+          </span>
+
+          {/* Category badge */}
+          <span className="absolute top-3 right-3 text-[10px] font-semibold text-white/70 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 max-w-[110px] truncate">
+            {listing.category}
+          </span>
         </div>
 
         {/* Content */}
         <div className="p-4 flex flex-col flex-grow">
-          <div className="flex justify-between items-start mb-1">
-            <h3 className="font-bold text-[#c9d1d9] text-[15px] truncate pr-2 group-hover:text-[#22c55e] transition-colors">
-              {listing.title}
-            </h3>
-            <p className="text-[#22c55e] font-black text-lg">₹{listing.price}</p>
-          </div>
-          
-          <div className="flex items-center gap-2 mt-2 mb-3">
-            <span className="text-xs font-semibold text-gray-400 bg-white/5 px-2 py-1 rounded-lg">
-              {listing.category}
-            </span>
-            <span className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-lg font-bold ${conditionColors[listing.condition]}`}>
-              {listing.condition}
-            </span>
-          </div>
+          <h3 className="font-bold text-white text-[15px] leading-snug line-clamp-2 group-hover:text-[#1DB954] transition-colors duration-200 mb-2">
+            {listing.title}
+          </h3>
 
-          <div className="mt-auto pt-3 border-t border-[#30363d] flex justify-between items-center text-[11px] text-[#8b949e] font-medium">
-            <div className="flex items-center gap-1.5 truncate">
-              <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-white text-[8px] uppercase">
+          {/* Price */}
+          <p className="text-2xl font-black text-[#1DB954] mt-auto mb-3 tracking-tight">
+            ₹{listing.price.toLocaleString("en-IN")}
+          </p>
+
+          {/* Footer */}
+          <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#1DB954]/30 to-[#1DB954]/10 border border-[#1DB954]/20 flex items-center justify-center text-white text-[9px] uppercase font-black flex-shrink-0">
                 {listing.seller?.name?.[0] || "?"}
               </div>
-              <span className="truncate">{listing.seller?.name || "Unknown"}</span>
+              <span className="text-[12px] text-white/50 font-medium truncate">
+                {listing.seller?.name || "Unknown"}
+              </span>
             </div>
             {listing.createdAt && (
-              <span className="flex-shrink-0 ml-2">{new Date(listing.createdAt).toLocaleDateString()}</span>
+              <span className="text-[11px] text-white/30 flex-shrink-0 font-mono">
+                {new Date(listing.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
+              </span>
             )}
           </div>
         </div>
+
+        {/* Hover glow effect at the bottom */}
+        <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-[#1DB954] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
     </Link>
   );
