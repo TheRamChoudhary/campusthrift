@@ -266,10 +266,10 @@ export default function CreateListing() {
                   className="w-full border border-[#30363d] rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#58a6ff]/20 focus:border-[#58a6ff] transition-all duration-200 bg-slate-50/50 hover:bg-slate-50 cursor-pointer"
                 >
                   <option value="">Select a condition</option>
-                  <option value="new">🆕 Brand New (Unused / unopened package)</option>
-                  <option value="like-new">✨ Like New (Rarely used, pristine state)</option>
-                  <option value="good">👍 Good (Fully functional, minor wear)</option>
-                  <option value="fair">🩹 Fair (Visible wear, works perfectly)</option>
+                  <option value="new">Brand New (Unused / unopened package)</option>
+                  <option value="like-new">Like New (Rarely used, pristine state)</option>
+                  <option value="good">Good (Fully functional, minor wear)</option>
+                  <option value="fair">Fair (Visible wear, works perfectly)</option>
                 </select>
               </div>
             </div>
@@ -326,9 +326,9 @@ export default function CreateListing() {
                 />
 
                 <div className="text-center p-6 pointer-events-none">
-                  <span className="text-4xl block mb-2 filter drop-shadow-2xl ">
-                    📸
-                  </span>
+                  <div className="flex justify-center mb-2">
+                    <svg className="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                  </div>
                   <p className="text-sm font-semibold text-[#8b949e]">
                     Drag & drop your images here or{" "}
                     <span className="text-[#58a6ff] hover:underline">
@@ -339,7 +339,6 @@ export default function CreateListing() {
                     JPEG, PNG, WebP · Max 5MB per file
                   </p>
                   <div className="mt-3.5 inline-flex items-center gap-1.5 bg-[#388bfd]/10 text-indigo-700 px-3.5 py-1 rounded-full text-xs font-bold shadow-2xl ">
-                    <span>⚡</span>
                     <span>{imageFiles.length}/10 Images Uploaded</span>
                   </div>
                 </div>
@@ -413,7 +412,7 @@ export default function CreateListing() {
                             title="Delete Image"
                             className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors ml-1"
                           >
-                            🗑️
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                           </button>
                         </div>
                       </div>
@@ -439,7 +438,9 @@ export default function CreateListing() {
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
                   <div className="text-center p-4 pointer-events-none">
-                    <span className="text-3xl block mb-1">🎥</span>
+                    <div className="flex justify-center mb-1">
+                      <svg className="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    </div>
                     <p className="text-xs font-semibold text-[#8b949e]">
                       Upload product demo video or <span className="text-[#58a6ff] hover:underline">browse files</span>
                     </p>
@@ -508,7 +509,7 @@ export default function CreateListing() {
                   </>
                 ) : (
                   <>
-                    <span>🚀 Publish Product Listing</span>
+                    <span>Publish Product Listing</span>
                   </>
                 )}
               </button>

@@ -16,10 +16,10 @@ const SORT_OPTIONS = [
 
 const CONDITION_OPTIONS = [
   { value: "", label: "All Conditions" },
-  { value: "new", label: "🆕 Brand New" },
-  { value: "like-new", label: "✨ Like New" },
-  { value: "good", label: "👍 Good" },
-  { value: "fair", label: "🩹 Fair" },
+  { value: "new", label: "Brand New" },
+  { value: "like-new", label: "Like New" },
+  { value: "good", label: "Good" },
+  { value: "fair", label: "Fair" },
 ];
 
 function SkeletonGrid({ count = 8 }) {
@@ -165,8 +165,9 @@ export default function Marketplace() {
           <div className="bg-white/3 border border-white/8 rounded-3xl p-5 mb-8 space-y-4">
             {/* Row 1: Search Bar */}
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1">
-                🔍 Search
+              <label className="block text-[11px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1 flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                Search
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none">
@@ -193,7 +194,7 @@ export default function Marketplace() {
               {/* Smart hint when search conflicts with category */}
               {debouncedSearch && category && (
                 <p className="text-[11px] text-amber-400/80 mt-2 px-1 flex items-center gap-1.5">
-                  <span>⚡</span>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                   Searching <strong className="text-white">"{debouncedSearch}"</strong> within{" "}
                   <strong className="text-[#1DB954]">{category}</strong>.
                   {data?.listings?.length === 0 && !isLoading && (
@@ -212,8 +213,9 @@ export default function Marketplace() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {/* Category */}
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1">
-                  📂 Category
+                <label className="block text-[11px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1 flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                  Category
                 </label>
                 <div className="relative">
                   <select
@@ -236,8 +238,9 @@ export default function Marketplace() {
 
               {/* Condition */}
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1">
-                  🛡️ Condition
+                <label className="block text-[11px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1 flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                  Condition
                 </label>
                 <div className="relative">
                   <select
@@ -259,8 +262,9 @@ export default function Marketplace() {
 
               {/* Sort */}
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1">
-                  ↕️ Sort By
+                <label className="block text-[11px] font-bold uppercase tracking-widest text-white/30 mb-2 px-1 flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" /></svg>
+                  Sort By
                 </label>
                 <div className="relative">
                   <select
@@ -287,25 +291,29 @@ export default function Marketplace() {
                 <span className="text-[11px] text-white/25 font-semibold uppercase tracking-wider">Active:</span>
                 {debouncedSearch && (
                   <span className="flex items-center gap-1.5 text-[12px] font-semibold bg-white/5 border border-white/10 text-white/70 px-3 py-1 rounded-full">
-                    🔍 "{debouncedSearch}"
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    "{debouncedSearch}"
                     <button onClick={() => { setSearch(""); setDebouncedSearch(""); }} className="hover:text-white transition ml-0.5">✕</button>
                   </span>
                 )}
                 {category && (
                   <span className="flex items-center gap-1.5 text-[12px] font-semibold bg-[#1DB954]/10 border border-[#1DB954]/20 text-[#1DB954] px-3 py-1 rounded-full">
-                    📂 {category}
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                    {category}
                     <button onClick={() => { setCategory(""); setPage(1); }} className="hover:text-white transition ml-0.5">✕</button>
                   </span>
                 )}
                 {condition && (
                   <span className="flex items-center gap-1.5 text-[12px] font-semibold bg-[#1DB954]/10 border border-[#1DB954]/20 text-[#1DB954] px-3 py-1 rounded-full">
-                    🛡️ {CONDITION_OPTIONS.find(c => c.value === condition)?.label}
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    {CONDITION_OPTIONS.find(c => c.value === condition)?.label}
                     <button onClick={() => { setCondition(""); setPage(1); }} className="hover:text-white transition ml-0.5">✕</button>
                   </span>
                 )}
                 {sort && (
                   <span className="flex items-center gap-1.5 text-[12px] font-semibold bg-[#1DB954]/10 border border-[#1DB954]/20 text-[#1DB954] px-3 py-1 rounded-full">
-                    ↕️ {SORT_OPTIONS.find(s => s.value === sort)?.label}
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" /></svg>
+                    {SORT_OPTIONS.find(s => s.value === sort)?.label}
                     <button onClick={() => { setSort(""); setPage(1); }} className="hover:text-white transition ml-0.5">✕</button>
                   </span>
                 )}
@@ -350,7 +358,9 @@ export default function Marketplace() {
               <SkeletonGrid />
             ) : isError ? (
               <div className="text-center py-24">
-                <span className="text-5xl block mb-4">⚠️</span>
+                <span className="text-slate-600 flex justify-center mb-4">
+                  <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </span>
                 <p className="text-white/50 font-semibold">Failed to load listings</p>
                 <p className="text-white/30 text-sm mt-1">Please try again later.</p>
               </div>
@@ -358,7 +368,9 @@ export default function Marketplace() {
               /* ── SEARCH + CATEGORY conflict: no results in this category ── */
               <div>
                 <div className="text-center py-12 bg-white/3 border border-white/8 rounded-3xl mb-10">
-                  <span className="text-5xl block mb-4">🔍</span>
+                  <span className="text-slate-500 flex justify-center mb-4">
+                    <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                  </span>
                   <p className="text-white/70 font-bold text-lg">
                     No "{debouncedSearch}" found in <span className="text-[#1DB954]">{category}</span>
                   </p>
@@ -408,7 +420,9 @@ export default function Marketplace() {
             ) : data?.listings?.length === 0 ? (
               /* ── GENUINE empty state ── */
               <div className="text-center py-24">
-                <span className="text-6xl block mb-4 opacity-40">🛒</span>
+                <span className="text-slate-600 flex justify-center mb-4">
+                  <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </span>
                 <p className="text-white/60 font-bold text-lg">No listings found</p>
                 <p className="text-white/30 text-sm mt-2 max-w-sm mx-auto">
                   Try broadening your search or removing some filters.

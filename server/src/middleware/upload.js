@@ -42,7 +42,7 @@ const uploadToCloudinary = (buffer, isVideo = false) => {
 
   const uploadOptions = {
     folder: "campusthrift",
-    resource_type: "auto",
+    resource_type: isVideo ? "video" : "auto",
   };
 
   if (!isVideo) {

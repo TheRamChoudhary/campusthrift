@@ -13,7 +13,13 @@ createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <App />
-        <Toaster position="top-right" />
+        <Toaster 
+          position="top-right" 
+          toastOptions={{
+            duration: 5000,
+            error: { duration: 10000 },
+          }} 
+        />
       </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>,

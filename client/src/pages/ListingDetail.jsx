@@ -55,8 +55,8 @@ export default function ListingDetail() {
     onSuccess: (resData) => {
       toast.success(
         resData.isWishlisted
-          ? "Added to wishlist! ❤️"
-          : "Removed from wishlist! 💔",
+          ? "Added to wishlist!"
+          : "Removed from wishlist!",
       );
       queryClient.invalidateQueries({ queryKey: ["user-profile"] });
     },
@@ -212,7 +212,7 @@ export default function ListingDetail() {
     },
     onSuccess: (res) => {
       const newStatus = res.data?.status || "updated";
-      toast.success(`Listing marked as ${newStatus}! ✅`);
+      toast.success(`Listing marked as ${newStatus}!`);
       queryClient.invalidateQueries({ queryKey: ["listing", id] });
       queryClient.invalidateQueries({ queryKey: ["listings"] });
       queryClient.invalidateQueries({ queryKey: ["my-listings"] });
@@ -274,16 +274,16 @@ export default function ListingDetail() {
   });
 
   const statusColors = {
-    available: "bg-emerald-100 text-emerald-800 border border-emerald-200",
-    reserved: "bg-amber-100 text-amber-800 border border-amber-200",
-    sold: "bg-rose-100 text-rose-800 border border-rose-200",
+    available: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+    reserved: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
+    sold: "bg-rose-500/10 text-rose-400 border border-rose-500/20",
   };
 
   const conditionLabels = {
-    new: "Brand New (🆕)",
-    "like-new": "Like New (✨)",
-    good: "Good Condition (👍)",
-    fair: "Fair Condition (🩹)",
+    new: "Brand New",
+    "like-new": "Like New",
+    good: "Good Condition",
+    fair: "Fair Condition",
   };
 
   if (isLoading)
@@ -306,7 +306,13 @@ export default function ListingDetail() {
       <div className="min-h-screen bg-transparent">
         <Navbar />
         <div className="text-center py-32 px-4 max-w-md mx-auto">
-          <span className="text-6xl block mb-4">{isSuspendedError ? "🚫" : "🔍"}</span>
+          <span className="text-6xl block mb-4 text-slate-500">
+            {isSuspendedError ? (
+              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            ) : (
+              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            )}
+          </span>
           <h2 className="text-xl font-bold text-[#c9d1d9]">
             {isSuspendedError ? "Seller Suspended" : "Listing Not Found"}
           </h2>
@@ -340,7 +346,7 @@ export default function ListingDetail() {
         {/* Main Grid: Images Column + Details Column */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* LEFT: Product Image Carousel & Thumbnails */}
-          <div className="lg:col-span-7 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-3xl border border-slate-100/80 shadow-2xl  p-5 space-y-4">
+          <div className="lg:col-span-7 lg:sticky lg:top-24 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-3xl border border-slate-100/80 shadow-2xl  p-5 space-y-4">
             {/* Aspect-ratio Locked Main Image viewport */}
             <div
               onClick={() => {
@@ -369,14 +375,17 @@ export default function ListingDetail() {
                   />
                 )
               ) : (
-                <span className="text-9xl">📦</span>
+                <span className="text-slate-600">
+                  <svg className="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                </span>
               )}
 
               {/* Hover Overlay */}
               {mediaItems[activeImageIndex]?.type === "image" && (
                 <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20/90 backdrop-blur-sm text-slate-100 px-4 py-2 rounded-xl text-xs font-bold shadow-xl  flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                    🔍 Click for Fullscreen Preview
+                  <span className="bg-slate-900/90 border border-white/10 text-slate-100 px-4 py-2 rounded-xl text-xs font-bold shadow-xl flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                    Click for Fullscreen Preview
                   </span>
                 </div>
               )}
@@ -404,7 +413,9 @@ export default function ListingDetail() {
                   >
                     {item.type === "video" ? (
                       <div className="w-full h-full flex flex-col items-center justify-center bg-slate-850 text-white gap-1 select-none">
-                        <span className="text-lg">🎥</span>
+                        <span className="text-slate-400">
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        </span>
                         <span className="text-[7px] uppercase tracking-wider font-extrabold text-white/90">Video</span>
                       </div>
                     ) : (
@@ -463,23 +474,24 @@ export default function ListingDetail() {
                   disabled={toggleWishlistMutation.isPending}
                   className={`p-3 rounded-2xl border transition-all duration-200 flex-shrink-0 flex items-center justify-center ${
                     isWishlisted
-                      ? "bg-rose-50 border-rose-100 text-rose-500 scale-105 shadow-2xl  hover:bg-rose-100"
-                      : "bg-slate-50 border-slate-100 text-slate-400 hover:text-rose-500 hover:border-rose-100 hover:bg-rose-50/30"
+                      ? "bg-rose-500/20 border-rose-500/30 text-rose-500 scale-105 shadow-2xl hover:bg-rose-500/30"
+                      : "bg-white/5 border-white/10 text-slate-400 hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10"
                   }`}
                   title={
                     isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"
                   }
                 >
-                  <span className="text-lg transition-transform duration-200 hover:scale-110">
-                    ❤️
+                  <span className="transition-transform duration-200 hover:scale-110">
+                    <svg className="w-6 h-6" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                   </span>
                 </button>
               </div>
 
               {/* Condition & Specific tags */}
               <div className="flex gap-2 flex-wrap pt-2">
-                <span className="bg-blue-50 text-blue-700 text-xs font-bold px-3.5 py-1 rounded-full border border-blue-100">
-                  🛡️ {conditionLabels[data.condition] || data.condition}
+                <span className="bg-blue-500/10 text-blue-400 text-xs font-bold px-3.5 py-1 rounded-full border border-blue-500/20 flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                  {conditionLabels[data.condition] || data.condition}
                 </span>
                 {data.tags &&
                   data.tags.map((tag) => (
@@ -541,18 +553,21 @@ export default function ListingDetail() {
                     </p>
                   )}
                   {(data.seller?.department || data.seller?.branch) && (
-                    <p className="text-slate-500 font-medium">
-                      🎓 {data.seller.department}{data.seller.branch ? ` (${data.seller.branch})` : ""}
+                    <p className="text-slate-400 font-medium flex items-center gap-2">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z" transform="translate(0 6)"></path></svg>
+                      {data.seller.department}{data.seller.branch ? ` (${data.seller.branch})` : ""}
                     </p>
                   )}
                   {data.seller?.hostel && (
-                    <p className="text-slate-500 font-medium">
-                      🏠 Hostel: {data.seller.hostel}
+                    <p className="text-slate-400 font-medium flex items-center gap-2">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                      Hostel: {data.seller.hostel}
                     </p>
                   )}
                   {data.seller?.phone && (
-                    <p className="text-slate-500 font-medium font-mono text-[11px]">
-                      📞 Contact: {data.seller.phone}
+                    <p className="text-slate-400 font-medium font-mono text-[11px] flex items-center gap-2">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                      Contact: {data.seller.phone}
                     </p>
                   )}
                 </div>
@@ -561,11 +576,12 @@ export default function ListingDetail() {
               {/* Trust Score Progress Bar Integration */}
               <div className="bg-[#388bfd]/10/50 border border-indigo-100/30 rounded-2xl p-4 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-indigo-700">
+                  <span className="font-bold text-indigo-400">
                     {isSeller ? "Your Trust Level" : "Seller Trust Level"}
                   </span>
-                  <span className="font-black text-[#58a6ff] font-mono">
-                    🌟 {data.seller?.trustScore || 100} / 100
+                  <span className="font-black text-[#58a6ff] font-mono flex items-center gap-1.5">
+                    <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                    {data.seller?.trustScore || 100} / 100
                   </span>
                 </div>
                 <div className="w-full bg-indigo-100 rounded-full h-2 overflow-hidden shadow-inner">
@@ -587,8 +603,8 @@ export default function ListingDetail() {
               {isSeller ? (
                 /* SELLER CONTROLS */
                 <div className="space-y-4">
-                  <div className="bg-[#388bfd]/10 text-indigo-700 text-xs font-bold px-4 py-3 rounded-2xl text-center flex items-center justify-center gap-1.5">
-                    <span>📋</span>
+                  <div className="bg-[#388bfd]/10 text-[#58a6ff] text-xs font-bold px-4 py-3 rounded-2xl text-center flex items-center justify-center gap-1.5">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                     <span>
                       You own this listing. Access seller commands below.
                     </span>
@@ -602,7 +618,7 @@ export default function ListingDetail() {
                         data.status === "available" ||
                         updateStatusMutation.isPending
                       }
-                      className="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 disabled:opacity-40 disabled:hover:bg-emerald-50 border border-emerald-100 font-bold py-3 rounded-xl text-xs transition duration-200"
+                      className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 disabled:opacity-40 disabled:hover:bg-emerald-500/10 border border-emerald-500/30 font-bold py-3 rounded-xl text-xs transition duration-200"
                     >
                       Available
                     </button>
@@ -611,7 +627,7 @@ export default function ListingDetail() {
                       disabled={
                         data.status === "sold" || updateStatusMutation.isPending
                       }
-                      className="bg-rose-50 hover:bg-rose-100 text-rose-800 disabled:opacity-40 disabled:hover:bg-rose-50 border border-rose-100 font-bold py-3 rounded-xl text-xs transition duration-200"
+                      className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 disabled:opacity-40 disabled:hover:bg-rose-500/10 border border-rose-500/30 font-bold py-3 rounded-xl text-xs transition duration-200"
                     >
                       Mark Sold
                     </button>
@@ -630,9 +646,10 @@ export default function ListingDetail() {
                         });
                         setIsEditModalOpen(true);
                       }}
-                      className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition duration-200"
+                      className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl text-xs transition duration-200 flex items-center justify-center gap-2"
                     >
-                      ✏️ Edit Listing Details
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                      Edit Listing Details
                     </button>
                     <button
                       onClick={() => {
@@ -645,11 +662,16 @@ export default function ListingDetail() {
                         }
                       }}
                       disabled={deleteListingMutation.isPending}
-                      className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs transition duration-200 shadow-xl  hover:shadow-rose-500/20 disabled:opacity-50"
+                      className="w-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/30 font-bold py-3 rounded-xl text-xs transition duration-200 shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
                     >
-                      {deleteListingMutation.isPending
-                        ? "Deleting..."
-                        : "🗑️ Delete Listing"}
+                      {deleteListingMutation.isPending ? (
+                        "Deleting..."
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                          Delete Listing
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -659,7 +681,7 @@ export default function ListingDetail() {
                   {isRequestApproved ? (
                     <>
                       <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold px-4 py-3.5 rounded-2xl text-center flex items-center justify-center gap-1.5">
-                        <span>🎉</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span>Your buy request was approved by the seller!</span>
                       </div>
                       <button
@@ -667,19 +689,21 @@ export default function ListingDetail() {
                         disabled={startChatMutation.isPending}
                         className="w-full bg-[#238636] hover:bg-[#2ea043] text-white font-bold py-3.5 rounded-2xl transition duration-200 disabled:opacity-50 flex items-center justify-center gap-2 text-xs shadow-2xl "
                       >
-                        <span>💬 Negotiate / Chat with Seller</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        <span>Negotiate / Chat with Seller</span>
                       </button>
                     </>
                   ) : (
                     <div className="bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold px-4 py-3.5 rounded-2xl text-center flex items-center justify-center gap-1.5 animate-pulse">
-                      <span>⏳</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                       <span>Your request is pending seller approval. Chat will unlock once approved.</span>
                     </div>
                   )}
                 </div>
               ) : data.status !== "available" ? (
-                <div className="bg-slate-100 text-slate-500 text-xs font-bold px-4 py-3.5 rounded-2xl text-center">
-                  🔒 This listing is currently {data.status}.
+                <div className="bg-slate-800 text-slate-400 text-xs font-bold px-4 py-3.5 rounded-2xl text-center flex items-center justify-center gap-1.5 border border-slate-700">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                  This listing is currently {data.status}.
                 </div>
               ) : (
                 /* REQUEST TO BUY */
@@ -702,11 +726,16 @@ export default function ListingDetail() {
                         sendRequestMutation.mutate();
                       }}
                       disabled={sendRequestMutation.isPending}
-                      className="w-full bg-[#238636] hover:bg-[#2ea043] text-white font-bold py-3.5 rounded-2xl transition duration-200 disabled:opacity-50 shadow-2xl  hover:shadow-indigo-500/20 text-xs uppercase tracking-wider"
+                      className="w-full bg-[#238636] hover:bg-[#2ea043] text-white font-bold py-3.5 rounded-2xl transition duration-200 disabled:opacity-50 shadow-2xl  hover:shadow-indigo-500/20 text-xs uppercase tracking-wider flex items-center justify-center gap-2"
                     >
-                      {sendRequestMutation.isPending
-                        ? "Sending Request..."
-                        : "🛒 Request to Buy"}
+                      {sendRequestMutation.isPending ? (
+                        "Sending Request..."
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                          Request to Buy
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -715,14 +744,14 @@ export default function ListingDetail() {
 
             {/* ADMINISTRATOR / MODERATION BYPASS CONTROLS */}
             {user && ["admin", "moderator"].includes(user.role) && (
-              <div className="bg-rose-50 border border-rose-100 rounded-3xl p-6 space-y-3.5 shadow-2xl ">
+              <div className="bg-rose-500/10 border border-rose-500/30 rounded-3xl p-6 space-y-3.5 shadow-2xl ">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">🛡️</span>
-                  <h3 className="text-xs font-extrabold text-rose-800 uppercase tracking-wider">
+                  <svg className="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                  <h3 className="text-xs font-extrabold text-rose-400 uppercase tracking-wider">
                     Administrative Moderation View
                   </h3>
                 </div>
-                <p className="text-slate-650 text-xs leading-relaxed">
+                <p className="text-slate-300 text-xs leading-relaxed">
                   As a moderator or system admin, you have strict bypass access.
                   You can forcefully delete this listing or suspend/block this seller's account.
                 </p>
@@ -738,11 +767,16 @@ export default function ListingDetail() {
                       }
                     }}
                     disabled={deleteListingMutation.isPending}
-                    className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-2xl text-xs transition duration-200 shadow-xl disabled:opacity-50"
+                    className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-2xl text-xs transition duration-200 shadow-xl disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {deleteListingMutation.isPending
-                      ? "Moderating..."
-                      : "🗑️ Force Delete Listing"}
+                    {deleteListingMutation.isPending ? (
+                      "Moderating..."
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        Force Delete Listing
+                      </>
+                    )}
                   </button>
 
                   <button
@@ -758,17 +792,25 @@ export default function ListingDetail() {
                       }
                     }}
                     disabled={toggleBlockSellerMutation.isPending}
-                    className={`w-full font-bold py-3.5 rounded-2xl text-xs transition duration-200 shadow-xl disabled:opacity-50 ${
+                    className={`w-full font-bold py-3.5 rounded-2xl text-xs transition duration-200 shadow-xl disabled:opacity-50 flex items-center justify-center gap-2 ${
                       data.seller?.isBlocked
                         ? "bg-emerald-600 hover:bg-emerald-700 text-white"
                         : "bg-amber-600 hover:bg-amber-700 text-white"
                     }`}
                   >
-                    {toggleBlockSellerMutation.isPending
-                      ? "Processing..."
-                      : data.seller?.isBlocked
-                      ? "🔓 Reinstate Seller Account"
-                      : "🚫 Suspend Seller Account"}
+                    {toggleBlockSellerMutation.isPending ? (
+                      "Processing..."
+                    ) : data.seller?.isBlocked ? (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                        Reinstate Seller Account
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                        Suspend Seller Account
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -787,7 +829,7 @@ export default function ListingDetail() {
                   }}
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-rose-500 transition duration-150"
                 >
-                  <span>⚠️</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                   <span>Report this Listing</span>
                 </button>
               </div>
