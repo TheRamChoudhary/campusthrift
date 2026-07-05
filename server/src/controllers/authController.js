@@ -38,10 +38,6 @@ exports.register = asyncHandler(async (req, res, next) => {
   const otp = generateOTP();
   await OTP.create({ email, otp });
 
-  if (process.env.NODE_ENV === "development") {
-    console.log(`\n🔑 DEV OTP for ${email}: ${otp}\n`);
-  }
-
   let emailSent = false;
   try {
     await sendOTPEmail(email, otp);
@@ -197,10 +193,6 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   user.resetPasswordToken = hashedToken;
   user.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
   await user.save();
-
-  if (process.env.NODE_ENV === "development") {
-    console.log(`\n🔑 DEV RESET OTP for ${email}: ${resetOTP}\n`);
-  }
 
   let emailSent = false;
   try {

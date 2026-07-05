@@ -117,6 +117,20 @@ export default function Navbar() {
             >
               Marketplace
             </Link>
+            <Link
+              to="/guidelines"
+              className="text-[15px] font-semibold text-white/70 hover:text-white transition px-3 py-2 rounded-xl hover:bg-white/10"
+            >
+              Guidelines
+            </Link>
+            {isAuthenticated && (
+              <Link
+                to="/dashboard"
+                className="text-[15px] font-semibold text-white/70 hover:text-white transition px-3 py-2 rounded-xl hover:bg-white/10"
+              >
+                Dashboard
+              </Link>
+            )}
             {isAuthenticated && (
               <Link
                 to="/my-listings"
@@ -188,7 +202,8 @@ export default function Navbar() {
                 <div className="absolute right-0 mt-3 w-96 max-w-[calc(100vw-2rem)] bg-black/90 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl py-3 z-50 text-white animate-scaleUp">
                   <div className="flex items-center justify-between px-5 pb-3 border-b border-white/10">
                     <span className="font-extrabold text-sm text-white flex items-center gap-2">
-                      🔔 Notifications
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                      Notifications
                       {unreadCount > 0 && (
                         <span className="bg-rose-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
                           {unreadCount} new
@@ -240,8 +255,8 @@ export default function Navbar() {
                       ))
                     ) : (
                       <div className="text-center py-12">
-                        <span className="text-4xl block mb-3 opacity-40">
-                          📭
+                        <span className="text-slate-500 flex justify-center mb-3">
+                          <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         </span>
                         <p className="text-sm text-white/40 font-semibold">
                           All caught up!
@@ -327,13 +342,29 @@ export default function Navbar() {
           >
             Marketplace
           </Link>
+          <Link
+            to="/guidelines"
+            onClick={() => setIsMenuOpen(false)}
+            className="block text-sm font-medium text-white/70 hover:text-white transition py-2.5 px-3 rounded-lg hover:bg-white/5"
+          >
+            Guidelines
+          </Link>
+          {isAuthenticated && (
+            <Link
+              to="/dashboard"
+              onClick={() => setIsMenuOpen(false)}
+              className="block text-sm font-medium text-white/70 hover:text-white transition py-2.5 px-3 rounded-lg hover:bg-white/5"
+            >
+              Dashboard
+            </Link>
+          )}
           {isAuthenticated && (
             <Link
               to="/dashboard?tab=profile"
               onClick={() => setIsMenuOpen(false)}
               className="block text-sm font-medium text-white/70 hover:text-white transition py-2.5 px-3 rounded-lg hover:bg-white/5"
             >
-              👤 Profile Settings
+              <span className="flex items-center gap-1.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg> Profile Settings</span>
             </Link>
           )}
           {isAuthenticated && (
@@ -351,7 +382,7 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
               className="block text-sm font-medium text-white/70 hover:text-white transition py-2.5 px-3 rounded-lg hover:bg-white/5"
             >
-              💬 Chats
+              <span className="flex items-center gap-1.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg> Chats</span>
             </Link>
           )}
           {isAuthenticated && (
@@ -360,7 +391,7 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
               className="block text-sm font-medium text-white/70 hover:text-white transition py-2.5 px-3 rounded-lg hover:bg-white/5"
             >
-              📣 Feedback
+              <span className="flex items-center gap-1.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg> Feedback</span>
             </Link>
           )}
           {isAuthenticated &&
@@ -370,7 +401,7 @@ export default function Navbar() {
                 onClick={() => setIsMenuOpen(false)}
                 className="block text-sm font-semibold text-white bg-white/5 border border-white/20 hover:bg-white/10 transition py-2.5 px-3 rounded-lg text-center"
               >
-                🛡️ Admin Control Panel
+                <span className="flex items-center justify-center gap-1.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg> Admin Control Panel</span>
               </Link>
             )}
             <Link

@@ -13,6 +13,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,6 +22,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg("");
     try {
       const res = await api.post("/auth/login", formData);
       const { token, user } = res.data.data;
@@ -30,7 +32,8 @@ export default function Login() {
       toast.success("Login successful!");
       navigate("/marketplace");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
+      const msg = err.response?.data?.message || "Login failed";
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
     }
@@ -42,10 +45,10 @@ export default function Login() {
         className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${bgImage})` }}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-2xl"></div>
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-md"></div>
       </div>
 
-      <div className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.5)] w-full max-w-md p-10 z-10 relative">
+      <div className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.5)] w-full max-w-lg p-10 z-10 relative">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -56,6 +59,17 @@ export default function Login() {
         </div>
 
         <h2 className="text-xl font-semibold text-white mb-6">Welcome Back</h2>
+
+        {errorMsg && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm font-semibold rounded-xl p-4 mb-6">
+            <p>{errorMsg}</p>
+            {errorMsg.toLowerCase().includes("not found") && (
+              <Link to="/register" className="text-white underline mt-2 inline-block">
+                Create an account here
+              </Link>
+            )}
+          </div>
+        )}
 
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Email */}

@@ -16,6 +16,7 @@ export default function Register() {
     password: "",
     otp: "",
   });
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,8 +24,9 @@ export default function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
     if (!formData.email.endsWith("@nitt.edu")) {
-      toast.error("Only @nitt.edu emails are allowed");
+      setErrorMsg("Only @nitt.edu emails are allowed");
       return;
     }
     setLoading(true);
@@ -37,7 +39,8 @@ export default function Register() {
       toast.success("OTP sent! Check your NITT webmail inbox.");
       setStep(2);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Registration failed");
+      const msg = err.response?.data?.message || "Registration failed";
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
     }
@@ -46,6 +49,7 @@ export default function Register() {
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg("");
     try {
       const res = await api.post("/auth/verify-otp", {
         email: formData.email,
@@ -56,7 +60,8 @@ export default function Register() {
       toast.success("Registration successful! Welcome to CampusThrift!");
       navigate("/marketplace");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Invalid OTP");
+      const msg = err.response?.data?.message || "Invalid OTP";
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
     }
@@ -68,10 +73,10 @@ export default function Register() {
         className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${bgImage})` }}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-2xl"></div>
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-md"></div>
       </div>
 
-      <div className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.5)] w-full max-w-2xl p-10 z-10 relative">
+      <div className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.5)] w-full max-w-lg p-10 z-10 relative">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white">CampusThrift</h1>
@@ -81,6 +86,13 @@ export default function Register() {
         {step === 1 ? (
           <>
             <h2 className="text-xl font-semibold text-white mb-6">Create Account</h2>
+            
+            {errorMsg && (
+              <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm font-semibold rounded-xl p-4 mb-6">
+                {errorMsg}
+              </div>
+            )}
+
             <form onSubmit={handleRegister} className="space-y-4">
               {/* Name */}
               <div>
@@ -169,6 +181,12 @@ export default function Register() {
         ) : (
           <>
             <h2 className="text-xl font-semibold text-white mb-2">Verify Email</h2>
+
+            {errorMsg && (
+              <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm font-semibold rounded-xl p-4 mb-4">
+                {errorMsg}
+              </div>
+            )}
 
             {/* Webmail notice banner */}
             <div className="bg-[#1DB954]/10 border border-[#1DB954]/30 rounded-xl px-4 py-3 mb-4 flex items-start gap-3">

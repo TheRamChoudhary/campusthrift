@@ -104,7 +104,7 @@ export default function Feedback() {
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl  mb-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.02),transparent)]"></div>
           <div className="z-10 relative">
-            <span className="text-3xl sm:text-4xl">📣</span>
+            <span className="flex items-center gap-1.5"><svg className="w-8 h-8 text-[#58a6ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg></span>
             <h1 className="text-2xl sm:text-3xl font-black mt-2 tracking-tight text-[#c9d1d9]">
               Support & Trust Center
             </h1>
@@ -125,7 +125,7 @@ export default function Feedback() {
                 : "text-[#8b949e] hover:text-[#8b949e] hover:bg-transparent"
             }`}
           >
-            📋 File Feedback / Bug
+            <span className="flex justify-center items-center gap-1.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg> File Feedback / Bug</span>
           </button>
           <button
             onClick={() => setActiveTab("history")}
@@ -135,7 +135,7 @@ export default function Feedback() {
                 : "text-[#8b949e] hover:text-[#8b949e] hover:bg-transparent"
             }`}
           >
-            📜 Support Tickets ({myFeedback?.length || 0})
+            <span className="flex justify-center items-center gap-1.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Support Tickets ({myFeedback?.length || 0})</span>
           </button>
         </div>
 
@@ -145,7 +145,7 @@ export default function Feedback() {
           {activeTab === "submit-feedback" && (
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl  p-6 sm:p-8">
               <h2 className="text-xl font-bold text-[#c9d1d9] mb-2 flex items-center gap-2">
-                <span>📋</span> Submit Support Request
+                <svg className="w-6 h-6 text-[#58a6ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg> Submit Support Request
               </h2>
               <p className="text-[#8b949e] text-xs mb-6">
                 Your report will be directly forwarded to the NIT Trichy
@@ -174,10 +174,12 @@ export default function Feedback() {
                             : "border-[#30363d] text-[#8b949e] hover:bg-transparent"
                         }`}
                       >
-                        {type === "bug" && "🐛 "}
-                        {type === "rating" && "⭐ "}
-                        {type === "complaint" && "⚠️ "}
-                        {type === "rating" ? "Rate Seller" : type}
+                        <span className="flex justify-center items-center gap-1.5">
+                          {type === "bug" && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>}
+                          {type === "rating" && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>}
+                          {type === "complaint" && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>}
+                          {type === "rating" ? "Rate Seller" : type}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -188,7 +190,7 @@ export default function Feedback() {
                     {/* Confidentiality banner */}
                     <div className="bg-amber-550/10 border border-amber-500/20 rounded-xl p-4 text-xs text-[#8b949e] leading-relaxed space-y-1">
                       <p className="font-extrabold text-[#c9d1d9] flex items-center gap-1.5">
-                        <span>🔒</span> Confidentiality Guard
+                        <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg> Confidentiality Guard
                       </p>
                       <p>
                         Your seller review and ratings are **100% anonymous**. Individual stars and comments are never displayed on the seller's public profile or shared with them. They are only aggregated to update their dynamic marketplace Trust Score.
@@ -237,11 +239,11 @@ export default function Feedback() {
                           </button>
                         ))}
                         <span className="text-sm font-semibold text-[#8b949e] ml-3">
-                          {feedbackRating === 1 && "Poor 😠"}
-                          {feedbackRating === 2 && "Fair 😕"}
-                          {feedbackRating === 3 && "Average 🙂"}
-                          {feedbackRating === 4 && "Good 😊"}
-                          {feedbackRating === 5 && "Excellent! 😍"}
+                          {feedbackRating === 1 && "Poor"}
+                          {feedbackRating === 2 && "Fair"}
+                          {feedbackRating === 3 && "Average"}
+                          {feedbackRating === 4 && "Good"}
+                          {feedbackRating === 5 && "Excellent!"}
                         </span>
                       </div>
                     </div>
@@ -370,7 +372,7 @@ export default function Feedback() {
                 >
                   {submittingFeedback
                     ? "Submitting Request..."
-                    : "🚀 Submit Request"}
+                    : <span className="flex justify-center items-center gap-1.5"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg> Submit Request</span>}
                 </button>
               </form>
             </div>
@@ -382,7 +384,7 @@ export default function Feedback() {
           {activeTab === "history" && (
             <div className="space-y-4">
               <h2 className="text-lg font-bold text-[#c9d1d9] flex items-center gap-2 mb-2 px-1">
-                <span>📜</span> My Support Tickets
+                <svg className="w-5 h-5 text-[#58a6ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> My Support Tickets
               </h2>
 
               {isFeedbackLoading ? (
@@ -390,8 +392,8 @@ export default function Feedback() {
                   Loading support logs...
                 </div>
               ) : !myFeedback?.length ? (
-                <div className="text-center py-12 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl ">
-                  <p className="text-4xl mb-3">📭</p>
+                <div className="text-center py-12 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl border border-[#30363d] shadow-2xl flex flex-col items-center">
+                  <svg className="w-10 h-10 text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76"></path></svg>
                   <h3 className="font-bold text-[#8b949e] text-sm">
                     No support tickets found
                   </h3>
@@ -432,20 +434,20 @@ export default function Feedback() {
                       </p>
 
                       {item.type === "rating" && item.rating && (
-                        <div className="mt-2 text-xs font-bold text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20 inline-block">
-                          ⭐ Rated: {"★".repeat(item.rating)}{"☆".repeat(5 - item.rating)}
+                        <div className="mt-2 text-xs font-bold text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20 inline-flex items-center gap-1.5">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg> Rated: {"★".repeat(item.rating)}{"☆".repeat(5 - item.rating)}
                         </div>
                       )}
 
                       {item.type === "rating" && item.targetRollNo && (
-                        <div className="mt-2 text-xs font-semibold text-[#58a6ff] bg-[#388bfd]/10 px-3 py-1.5 rounded-lg border border-[#30363d] inline-block sm:ml-2">
-                          👤 Seller Roll No: {item.targetRollNo}
+                        <div className="mt-2 text-xs font-semibold text-[#58a6ff] bg-[#388bfd]/10 px-3 py-1.5 rounded-lg border border-[#30363d] inline-flex items-center gap-1.5 sm:ml-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg> Seller Roll No: {item.targetRollNo}
                         </div>
                       )}
 
                       {item.type === "complaint" && item.targetRollNo && (
-                        <div className="mt-2 text-xs font-semibold text-rose-500 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20 inline-block">
-                          🚨 Reported Roll Number: {item.targetRollNo}
+                        <div className="mt-2 text-xs font-semibold text-rose-500 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20 inline-flex items-center gap-1.5">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> Reported Roll Number: {item.targetRollNo}
                         </div>
                       )}
 

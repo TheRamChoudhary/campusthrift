@@ -13,6 +13,7 @@ export default function ForgotPassword() {
     password: "",
     confirmPassword: "",
   });
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,8 +21,9 @@ export default function ForgotPassword() {
 
   const handleRequestOTP = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
     if (!formData.email) {
-      toast.error("Please enter your email");
+      setErrorMsg("Please enter your email");
       return;
     }
 
@@ -33,7 +35,8 @@ export default function ForgotPassword() {
       toast.success(res.data.message || "OTP sent successfully!");
       setStep(2);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to send OTP");
+      const msg = err.response?.data?.message || "Failed to send OTP";
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
     }
@@ -41,18 +44,19 @@ export default function ForgotPassword() {
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
     if (!formData.otp || !formData.password || !formData.confirmPassword) {
-      toast.error("Please fill in all fields");
+      setErrorMsg("Please fill in all fields");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
+      setErrorMsg("Passwords do not match");
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+      setErrorMsg("Password must be at least 6 characters");
       return;
     }
 
@@ -66,7 +70,8 @@ export default function ForgotPassword() {
       toast.success(res.data.message || "Password reset successfully!");
       navigate("/login");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Password reset failed");
+      const msg = err.response?.data?.message || "Password reset failed";
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
     }
@@ -74,7 +79,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
-      <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl shadow-xl  w-full max-w-md p-8">
+      <div className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-2xl shadow-xl  w-full max-w-lg p-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-[#58a6ff]">CampusThrift</h1>
@@ -89,6 +94,12 @@ export default function ForgotPassword() {
             ? "Enter your official @nitt.edu student email to receive a recovery code."
             : "Enter the 6-digit OTP code sent to your email and set a new secure password."}
         </p>
+
+        {errorMsg && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm font-semibold rounded-xl p-4 mb-6">
+            {errorMsg}
+          </div>
+        )}
 
         {step === 1 ? (
           <form onSubmit={handleRequestOTP} className="space-y-4">

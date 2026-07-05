@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../api/axiosInstance";
@@ -6,14 +6,18 @@ import ListingCard from "../components/features/ListingCard";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import bgImage from "../assets/background_image.png";
+import useAuthStore from "../store/authStore";
 
 export default function Home() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
+  const trendingRef = useRef(null);
+  const recentlyViewedRef = useRef(null);
+
   const [recentlyViewed] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("recently-viewed") || "[]");
     } catch (e) {
-      console.error(e);
       return [];
     }
   });
@@ -63,7 +67,7 @@ export default function Home() {
                 Welcome to CampusThrift
               </h1>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1DB954] leading-tight mb-6 tracking-tight">
-                Buy & Sell second products on Campus
+                Buy & sell pre-loved goods safely on campus
               </h2>
               <p className="text-lg text-white/70 font-medium mb-8 leading-relaxed">
                 Find affordable books, electronics, furniture, bicycles and more from students around you. Safe, fast, and eco-friendly.
@@ -84,7 +88,7 @@ export default function Home() {
               </div>
             </div>
             <div className="hidden lg:block w-96 h-80 relative z-10">
-              <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2940&auto=format&fit=crop" alt="Students on campus" className="w-full h-full object-cover rounded-2xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-4 border-white/10" />
+              <img src="/hero_image.jpg" alt="Students on campus" className="w-full h-full object-cover rounded-2xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-4 border-white/10" />
             </div>
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#1DB954]/10 blur-[100px] rounded-full translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
           </div>
@@ -94,21 +98,21 @@ export default function Home() {
           <h2 className="text-2xl font-extrabold text-white mb-8 tracking-tight">Popular Categories</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
             {[
-              { name: "Books", icon: "📚", q: "Books & Notes" },
-              { name: "Electronics", icon: "💻", q: "Electronics" },
-              { name: "Furniture", icon: "🪑", q: "Furniture" },
-              { name: "Fashion", icon: "👕", q: "Clothing" },
-              { name: "Sports", icon: "⚽", q: "Sports" },
-              { name: "Stationery", icon: "✏️", q: "Stationery" },
-              { name: "Cycles", icon: "🚲", q: "Cycles & Bicycles" },
-              { name: "Others", icon: "📦", q: "Other" }
+              { name: "Books", icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>, q: "Books & Notes" },
+              { name: "Electronics", icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>, q: "Electronics" },
+              { name: "Furniture", icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>, q: "Furniture" },
+              { name: "Fashion", icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>, q: "Clothing" },
+              { name: "Sports", icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>, q: "Sports" },
+              { name: "Stationery", icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>, q: "Stationery" },
+              { name: "Cycles", icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16A4 4 0 1 0 4 8a4 4 0 0 0 0 8zm16 0A4 4 0 1 0 20 8a4 4 0 0 0 0 8zM15 8l-3 4-2-1"></path><circle cx="12" cy="12" r="1" fill="currentColor"></circle></svg>, q: "Cycles & Bicycles" },
+              { name: "Others", icon: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>, q: "Other" }
             ].map(cat => (
               <button
                 key={cat.name}
                 onClick={() => navigate('/marketplace?category=' + encodeURIComponent(cat.q))}
                 className="w-full aspect-square bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-[2rem] flex flex-col items-center justify-center gap-3 hover:bg-[#282828] hover:border-[#1DB954]/50 transition group"
               >
-                <span className="text-4xl group-hover:scale-110 transition-transform">{cat.icon}</span>
+                <span className="text-white/60 group-hover:scale-110 group-hover:text-white transition-transform">{cat.icon}</span>
                 <span className="text-[13px] font-bold text-white/80 group-hover:text-[#1DB954] transition">{cat.name}</span>
               </button>
             ))}
@@ -122,27 +126,61 @@ export default function Home() {
               <h2 className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight">
                 Trending Now
               </h2>
-              <span className="text-[10px] font-black text-[#1DB954] bg-[#1DB954]/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
+              <span className="text-[10px] font-black text-[#1DB954] bg-[#1DB954]/10 px-2.5 py-1 rounded-full uppercase tracking-wider hidden sm:inline-block">
                 Popular NITT Deals
               </span>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => isAuthenticated ? trendingRef.current?.scrollBy({ left: -320, behavior: 'smooth' }) : navigate('/login')}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button 
+                  onClick={() => isAuthenticated ? trendingRef.current?.scrollBy({ left: 320, behavior: 'smooth' }) : navigate('/login')}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+              </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div ref={trendingRef} className="flex overflow-x-auto gap-6 pb-4 snap-x snap-mandatory scrollbar-hide">
               {trendingData.map((listing) => (
-                <ListingCard key={listing._id} listing={listing} />
+                <div key={listing._id} className="snap-start shrink-0 w-[280px] sm:w-[320px]">
+                  <ListingCard listing={listing} />
+                </div>
               ))}
             </div>
           </div>
         )}
 
         {/* Recently Viewed Row */}
-        {filteredRecentlyViewed && filteredRecentlyViewed.length > 0 && (
+        {isAuthenticated && filteredRecentlyViewed && filteredRecentlyViewed.length > 0 && (
           <div className="mb-10 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-3xl p-6 shadow-2xl ">
-            <h2 className="text-xl sm:text-2xl font-black text-slate-100 mb-4 tracking-tight">
-              Recently Viewed
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight">
+                Recently Viewed
+              </h2>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => recentlyViewedRef.current?.scrollBy({ left: -320, behavior: 'smooth' })}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button 
+                  onClick={() => recentlyViewedRef.current?.scrollBy({ left: 320, behavior: 'smooth' })}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div ref={recentlyViewedRef} className="flex overflow-x-auto gap-6 pb-4 snap-x snap-mandatory scrollbar-hide">
               {filteredRecentlyViewed.map((listing) => (
-                <ListingCard key={listing._id} listing={listing} />
+                <div key={listing._id} className="snap-start shrink-0 w-[280px] sm:w-[320px]">
+                  <ListingCard listing={listing} />
+                </div>
               ))}
             </div>
           </div>

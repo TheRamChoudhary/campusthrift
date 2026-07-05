@@ -18,9 +18,10 @@ export default function Footer() {
                 className="w-10 h-10 rounded-full object-cover shadow-sm"
               />
               <span className="tracking-tight">CampusThrift</span>
+              <span className="bg-[#1DB954]/20 text-[#1DB954] text-xs sm:text-sm font-black px-2.5 py-0.5 rounded-full ml-2">v1.2.5</span>
             </Link>
             <p className="text-[15px] leading-relaxed text-[#8b949e] max-w-sm">
-              The premier marketplace for college students to securely buy, sell, and trade books, electronics, and essentials right on campus.
+              The premier marketplace for college students to securely buy, sell, and trade books, electronics, pre-loved goods, and old products right on campus.
             </p>
 
           </div>
@@ -31,7 +32,7 @@ export default function Footer() {
               Platform
             </h4>
             <ul className="space-y-2.5">
-              <li><Link to="/" className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Home</Link></li>
+              <li><Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Home</Link></li>
               <li><Link to="/marketplace" className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Marketplace</Link></li>
               <li><Link to="/create-listing" className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Sell Item</Link></li>
               <li><Link to="/feedback" className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Feedback</Link></li>
@@ -52,7 +53,7 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link to="/marketplace" className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">
+                <Link to="/marketplace" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">
                   View All &rarr;
                 </Link>
               </li>
@@ -65,8 +66,10 @@ export default function Footer() {
               Support
             </h4>
             <ul className="space-y-2.5">
-              <li><Link to="/privacy-policy" className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Terms & Conditions</Link></li>
+              <li><Link to="/privacy-policy" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Privacy Policy</Link></li>
+              <li><Link to="/terms" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Terms & Conditions</Link></li>
+              <li><Link to="/guidelines" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Community Guidelines</Link></li>
+              <li><Link to="/support" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-white/70 hover:text-[#1DB954] text-[15px] font-medium transition">Help & Support</Link></li>
             </ul>
           </div>
         </div>

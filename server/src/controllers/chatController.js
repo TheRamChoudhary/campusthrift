@@ -244,9 +244,7 @@ exports.unblockUser = asyncHandler(async (req, res, next) => {
 
   const currentUser = await User.findById(currentUserId);
   if (currentUser.blockedUsers) {
-    currentUser.blockedUsers = currentUser.blockedUsers.filter(
-      (id) => id.toString() !== userId.toString(),
-    );
+    currentUser.blockedUsers.pull(userId);
     await currentUser.save();
   }
 
